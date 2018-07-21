@@ -1,0 +1,22 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		" C ",
+		" M ",
+		" B "
+	],
+	"key": {
+		"C": {
+			"item": "experimental:corn"
+		},
+		"M": {
+			"item": "minecraft:milk_bucket"
+		},
+		"B": {
+			"item": "minecraft:bowl"
+		}
+	},
+	"result": {
+		"item": "experimental:creamed_corn_soup"
+	}
+}

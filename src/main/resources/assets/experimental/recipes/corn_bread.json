@@ -1,0 +1,14 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "experimental:corn"
+		},
+		{
+			"item": "minecraft:bread"
+		}
+	],
+	"result": {
+		"item": "experimental:corn_bread"
+	}
+}

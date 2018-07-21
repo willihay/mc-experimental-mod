@@ -1,0 +1,16 @@
+[
+{
+  "modid": "experimental",
+  "name": "Experimental Mod",
+  "description": "Our learning playground",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "http://minecraft.bensam.org",
+  "updateUrl": "",
+  "authorList": ["ZaphodB"],
+  "credits": "Thanks to the tutorials by Jimmy Koene, ShadowFacts, WeHaveCookies56",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

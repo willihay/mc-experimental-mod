@@ -1,0 +1,25 @@
+# English US language file
+
+# Creative Tab
+itemGroup.experimental=Experimental Mod
+
+# Items
+item.copper_sword.name=Copper Sword
+item.copper_pickaxe.name=Copper Pickaxe
+item.copper_axe.name=Copper Axe
+item.copper_shovel.name=Copper Shovel
+item.copper_hoe.name=Copper Hoe
+item.copper_helmet.name=Copper Helmet
+item.copper_chestplate.name=Copper Chestplate
+item.copper_leggings.name=Copper Leggings
+item.copper_boots.name=Copper Boots
+item.corn.name=Corn
+item.corn_bread.name=Corn Bread
+item.corn_seed.name=Corn Seed
+item.creamed_corn_soup.name=Creamed Corn Soup
+item.ingot_copper.name=Copper Ingot
+
+# Blocks
+tile.counter.name=Counter
+tile.ore_copper.name=Copper Ore
+tile.pedestal.name=Pedestal
