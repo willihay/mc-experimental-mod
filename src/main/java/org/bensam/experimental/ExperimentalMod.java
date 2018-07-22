@@ -13,9 +13,12 @@ import org.bensam.experimental.world.ModWorldGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemFood;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -39,9 +42,12 @@ public class ExperimentalMod
     public static final String NAME = "Experimental Mod";
     public static final String VERSION = "0.5";
     
+    public static final Item.ToolMaterial copperToolMaterial = EnumHelper.addToolMaterial("COPPER", 2, 500, 6.0f, 2.0f, 14);
+    public static final ItemArmor.ArmorMaterial copperArmorMaterial = EnumHelper.addArmorMaterial("COPPER", MODID + ":copper", 15, new int[] {2, 5, 6, 2}, 9, SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0f);
+
     private static Logger logger;
     
-    public static CreativeTab creativeTab;
+    public static CreativeTab creativeTab = new CreativeTab();
     
     public static SimpleNetworkWrapper network;
     
@@ -87,7 +93,6 @@ public class ExperimentalMod
     public void preInit(FMLPreInitializationEvent event)
     {
         logger = event.getModLog();
-        creativeTab = new CreativeTab();
         
         proxy.preInit(event);
         ModBlocks.preInit();

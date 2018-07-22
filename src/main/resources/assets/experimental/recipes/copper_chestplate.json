@@ -1,0 +1,16 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"C C",
+		"CCC",
+		"CCC"
+	],
+	"key": {
+		"C": {
+			"item": "experimental:ingot_copper"
+		}
+	},
+	"result": {
+		"item": "experimental:copper_chestplate"
+	}
+}

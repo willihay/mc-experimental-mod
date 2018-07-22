@@ -98,6 +98,7 @@ public class BlockPedestal extends BlockTileEntity<TileEntityPedestal>
 //                else
 //                {
 //                    player.sendMessage(new TextComponentString("Empty"));
+//                    // or use localization like: new TextComponentTranslation("tile.tutorial.pedestal.empty")
 //                }
                 player.openGui(ExperimentalMod.instance, ModGuiHandler.PEDESTAL, world, pos.getX(), pos.getY(), pos.getZ());
             }
