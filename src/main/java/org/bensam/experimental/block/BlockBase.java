@@ -34,10 +34,14 @@ public class BlockBase extends Block
     {
         ExperimentalMod.proxy.registerItemRenderer(itemBlock, 0, name);
     }
-    
+
+    /**
+     * 
+     * @return the ItemBlock form of this block, allowing it to be used in your inventory
+     */
     public Item createItemBlock()
     {
-        return new ItemBlock(this).setRegistryName(getRegistryName()); // ItemBlock is the form of a block in your inventory
+        return new ItemBlock(this).setRegistryName(getRegistryName()); // note that ItemBlock extends Item
     }
 
     @Override

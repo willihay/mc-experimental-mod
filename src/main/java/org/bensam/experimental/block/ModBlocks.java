@@ -4,6 +4,7 @@
 package org.bensam.experimental.block;
 
 import org.bensam.experimental.block.counter.BlockCounter;
+import org.bensam.experimental.block.mobdetector.BlockMobDetector;
 import org.bensam.experimental.block.pedestal.BlockPedestal;
 
 import net.minecraft.block.Block;
@@ -17,43 +18,41 @@ import net.minecraftforge.registries.IForgeRegistry;
  */
 public class ModBlocks
 {
-    public static BlockOre copperOre;
-    public static BlockCropCorn cornCrop;
-    public static BlockPedestal pedestal;
+    public static BlockOre copperOre = new BlockOre("ore_copper", "oreCopper");
+    public static BlockCropCorn cornCrop = new BlockCropCorn();
     public static BlockCounter counter = new BlockCounter();
-    
-    public static void preInit()
-    {
-        copperOre = new BlockOre("ore_copper", "oreCopper");
-        cornCrop = new BlockCropCorn();
-        pedestal = new BlockPedestal();
-    }
+    public static BlockMobDetector mobDetector = new BlockMobDetector();
+    public static BlockPedestal pedestal = new BlockPedestal();
     
     public static void register(IForgeRegistry<Block> registry)
     {
         registry.registerAll(
                 copperOre, 
-                cornCrop, 
-                pedestal,
-                counter);
+                cornCrop,
+                counter,
+                mobDetector,
+                pedestal);
         
-        GameRegistry.registerTileEntity(counter.getTileEntityClass(), counter.getRegistryName().toString());
-        GameRegistry.registerTileEntity(pedestal.getTileEntityClass(), pedestal.getRegistryName().toString());
+        GameRegistry.registerTileEntity(counter.getTileEntityClass(), counter.getRegistryName());
+        GameRegistry.registerTileEntity(mobDetector.getTileEntityClass(), mobDetector.getRegistryName());
+        GameRegistry.registerTileEntity(pedestal.getTileEntityClass(), pedestal.getRegistryName());
     }
 
     public static void registerItemBlocks(IForgeRegistry<Item> registry)
     {
         registry.registerAll(
                 copperOre.createItemBlock(),
-                pedestal.createItemBlock(),
-                counter.createItemBlock());
+                counter.createItemBlock(),
+                mobDetector.createItemBlock(),
+                pedestal.createItemBlock());
     }
     
     public static void registerModels()
     {
         copperOre.registerItemModel(Item.getItemFromBlock(copperOre));
-        pedestal.registerItemModel(Item.getItemFromBlock(pedestal));
         counter.registerItemModel(Item.getItemFromBlock(counter));
+        mobDetector.registerItemModel(Item.getItemFromBlock(mobDetector));
+        pedestal.registerItemModel(Item.getItemFromBlock(pedestal));
     }
     
 }

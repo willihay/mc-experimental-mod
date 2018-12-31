@@ -1,0 +1,21 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "experimental:mob_detector",
+		"textures": {
+			"txt": "experimental:blocks/mob_detector"
+		}
+	},
+	"variants": {
+		"normal": [{}],
+		"inventory": [{}],
+		"lit": {
+			"false": {},
+			"true": {
+				"textures": {
+					"txt": "experimental:blocks/mob_detector_on"
+				}
+			}
+		}
+	}
+}

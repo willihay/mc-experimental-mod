@@ -17,7 +17,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class ModItems
 {
     // Ingots
-    public static ItemOre copperIngot;
+    public static ItemOre copperIngot = new ItemOre("ingot_copper", "ingotCopper");
     
     // Tools
     public static ItemAxe copperAxe = new ItemAxe(ExperimentalMod.copperToolMaterial, "copper_axe");
@@ -33,19 +33,10 @@ public class ModItems
     public static ItemArmor copperLeggings = new ItemArmor(ExperimentalMod.copperArmorMaterial, EntityEquipmentSlot.LEGS, "copper_leggings");
     
     // Food & Seeds
-    public static ItemFoodBase corn;
-    public static ItemFoodBase cornBread;
-    public static ItemCornSeed cornSeed;
-    public static ItemFoodBase creamedCornSoup;
-    
-    public static void preInit()
-    {
-        copperIngot = new ItemOre("ingot_copper", "ingotCopper");
-        corn = new ItemFoodBase("corn", "cropCorn", 3, 0.6f, false);
-        cornBread = new ItemFoodBase("corn_bread", "", 5, 0.7f, false);
-        cornSeed = new ItemCornSeed();
-        creamedCornSoup = new ItemFoodBase("creamed_corn_soup", "", 6, 0.7f, false);
-    }
+    public static ItemFoodBase corn = new ItemFoodBase("corn", "cropCorn", 3, 0.6f, false);
+    public static ItemFoodBase cornBread = new ItemFoodBase("corn_bread", "", 5, 0.7f, false);
+    public static ItemCornSeed cornSeed = new ItemCornSeed();
+    public static ItemFoodBase creamedCornSoup = new ItemFoodBase("creamed_corn_soup", "", 6, 0.7f, false);
     
     public static void register(IForgeRegistry<Item> registry)
     {

@@ -6,6 +6,7 @@ package org.bensam.experimental.proxy;
 import org.bensam.experimental.ExperimentalMod;
 import org.bensam.experimental.block.pedestal.RendererPedestal;
 import org.bensam.experimental.block.pedestal.TileEntityPedestal;
+import org.bensam.experimental.entity.ModEntities;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
@@ -25,19 +26,20 @@ public class ClientProxy extends CommonProxy
     @Override
     public void preInit(FMLPreInitializationEvent event)
     {
-        logger = event.getModLog();
+        super.preInit(event);
     }
 
     @Override
     public void init(FMLInitializationEvent event)
     {
-        logger.info("** ClientProxy initialization event **");
+        super.init(event);
+        ExperimentalMod.logger.info("** ClientProxy initialization event **");
     }
 
     @Override
     public void postInit(FMLPostInitializationEvent event)
     {
-        
+        super.postInit(event);
     }
 
     @Override
@@ -56,6 +58,7 @@ public class ClientProxy extends CommonProxy
     public void registerRenderers()
     {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPedestal.class, new RendererPedestal());
+        ModEntities.registerRenderer();
     }
 
 }

@@ -4,7 +4,9 @@
  */
 package org.bensam.experimental.proxy;
 
-import org.apache.logging.log4j.Logger;
+import org.bensam.experimental.ExperimentalMod;
+import org.bensam.experimental.ModConfig;
+import org.bensam.experimental.entity.ModEntities;
 
 import net.minecraft.item.Item;
 import net.minecraft.util.text.translation.I18n;
@@ -18,22 +20,27 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
  */
 public class CommonProxy
 {
-    protected static Logger logger;
-    
     public void preInit(FMLPreInitializationEvent event)
     {
-        logger = event.getModLog();
+        ModConfig.initConfig(event.getModConfigurationDirectory());
+        ModConfig.readConfig();
+        // TODO: change copper sword attack damage based on config value
         
-        // often useful: event.getModConfigurationDirectory();
+        ModEntities.preInit();
     }
     
     public void init(FMLInitializationEvent event)
     {
-        logger.info("** CommonProxy initialization event **");
+        ExperimentalMod.logger.info("** CommonProxy initialization event **");
     }
     
     public void postInit(FMLPostInitializationEvent event)
-    {}
+    {
+        if (ModConfig.config.hasChanged())
+        {
+            ModConfig.config.save();
+        }
+    }
 
     public String localize(String unlocalized, Object... args)
     {

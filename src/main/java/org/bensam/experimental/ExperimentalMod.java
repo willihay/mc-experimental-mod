@@ -32,30 +32,31 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
 /**
+ * Note: dependency on Forge version 14.23.3.2694 is from use of ResourceLocation version of GameRegistry.registerTileEntity in ModBlocks.
  * @author Will
- *
+ * 
  */
-@Mod(modid = ExperimentalMod.MODID, name = ExperimentalMod.NAME, version = ExperimentalMod.VERSION)
+@Mod(modid = ExperimentalMod.MODID, name = ExperimentalMod.NAME, version = ExperimentalMod.VERSION /*, dependencies = "required-after:Forge@[14.23.3.2694,)"*/)
 public class ExperimentalMod
 {
     public static final String MODID = "experimental";
     public static final String NAME = "Experimental Mod";
     public static final String VERSION = "0.5";
     
+    @SidedProxy(clientSide = "org.bensam.experimental.proxy.ClientProxy", serverSide = "org.bensam.experimental.proxy.CommonProxy")
+    public static CommonProxy proxy; // proxies help run code on the right side (server or client)
+    
+    @Mod.Instance(MODID)
+    public static ExperimentalMod instance; // needed for GUIs and entities 
+
+    public static Logger logger; // for printing debug messages to console
+    
     public static final Item.ToolMaterial copperToolMaterial = EnumHelper.addToolMaterial("COPPER", 2, 500, 6.0f, 2.0f, 14);
     public static final ItemArmor.ArmorMaterial copperArmorMaterial = EnumHelper.addArmorMaterial("COPPER", MODID + ":copper", 15, new int[] {2, 5, 6, 2}, 9, SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0f);
-
-    private static Logger logger;
     
     public static CreativeTab creativeTab = new CreativeTab();
     
     public static SimpleNetworkWrapper network;
-    
-    @SidedProxy(clientSide = "org.bensam.experimental.proxy.ClientProxy", serverSide = "org.bensam.experimental.proxy.CommonProxy")
-    public static CommonProxy proxy;
-    
-    @Mod.Instance(MODID)
-    public static ExperimentalMod instance; // needed for GUIs and entities 
     
     /**
      * Signals to Forge that we want to listen to the main event bus, which allows mods to register/subscribe
@@ -95,8 +96,6 @@ public class ExperimentalMod
         logger = event.getModLog();
         
         proxy.preInit(event);
-        ModBlocks.preInit();
-        ModItems.preInit();
         
         // Second parameter to registerWorldGenerator() is the 'weight' to assign to this generator.
         // Heavy weights tend to sink to the bottom of the list of world generators (i.e. they run later).
@@ -127,6 +126,15 @@ public class ExperimentalMod
         
         // [experimental]: STONE BLOCK >> minecraft:stone
         logger.info("STONE BLOCK >> {}", Blocks.STONE.getRegistryName());
+        
+        // [experimental]: COUNTER TILEENTITY >> experimental:counter
+        logger.info("COUNTER TILEENTITY >> {}", ModBlocks.counter.getRegistryName());
+        
+        logger.info("IRON SWORD attack damage: {}", ((net.minecraft.item.ItemSword)Items.IRON_SWORD).getAttackDamage());
+        logger.info("COPPER SWORD attack damage: {}", ModItems.copperSword.getAttackDamage());
+        logger.info("COPPER MATERIAL attack damage: {}", copperToolMaterial.getAttackDamage());
+        logger.info("copperSwordAttackDamage: {}", ModConfig.copperSwordAttackDamage);
+        
         logger.info("Carrot Heal: {}; Saturation: {}", 
                 ((ItemFood)Items.CARROT).getHealAmount(null),
                 ((ItemFood)Items.CARROT).getSaturationModifier(null));

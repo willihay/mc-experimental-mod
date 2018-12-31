@@ -21,5 +21,9 @@ item.ingot_copper.name=Copper Ingot
 
 # Blocks
 tile.counter.name=Counter
+tile.mob_detector.name=Mob Detector
 tile.ore_copper.name=Copper Ore
 tile.pedestal.name=Pedestal
+
+# Entities
+entity.health_zombie.name=Health Zombie
