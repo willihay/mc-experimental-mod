@@ -14,13 +14,13 @@ import net.minecraft.item.ItemSpade;
 public class ItemShovel extends ItemSpade
 {
     private String name;
-    
+
     public ItemShovel(ToolMaterial material, String name)
     {
         super(material);
-        
+
         setRegistryName(name);
-        setUnlocalizedName(name);
+        setTranslationKey(name);
         this.name = name;
     }
 

@@ -17,13 +17,13 @@ import net.minecraft.util.math.AxisAlignedBB;
 public class TileEntityMobDetector extends TileEntity implements ITickable
 {
     private static final int INITIAL_DELAY = 10;
-    
+
     // Calculated on the client so no need for readFromNBT or writeToNBT.
     private boolean lit = false;
 
     private int updateDelayCounter = INITIAL_DELAY;
     private int lastMobCount = 0;
-    
+
     public boolean isLit()
     {
         return lit;

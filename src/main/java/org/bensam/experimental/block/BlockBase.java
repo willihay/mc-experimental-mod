@@ -18,18 +18,18 @@ import net.minecraft.item.ItemBlock;
 public class BlockBase extends Block
 {
     protected String name;
-    
+
     public BlockBase(Material material, String name)
     {
         super(material);
-        
+
         this.name = name;
-        setUnlocalizedName(name); // used for translating the name of the block into the currently active language
+        setTranslationKey(name); // used for translating the name of the block into the currently active language
         setRegistryName(name); // used when registering our block with Forge
-        
+
         setCreativeTab(ExperimentalMod.creativeTab);
     }
-    
+
     public void registerItemModel(Item itemBlock)
     {
         ExperimentalMod.proxy.registerItemRenderer(itemBlock, 0, name);
@@ -50,5 +50,5 @@ public class BlockBase extends Block
         super.setCreativeTab(tab);
         return this; // returns BlockBase instead of Block so we can use it in our register method without casting
     }
-    
+
 }

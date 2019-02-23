@@ -27,18 +27,18 @@ public class TileEntityCounter extends TileEntity
         compound.setInteger("count", count);
         return super.writeToNBT(compound);
     }
-    
+
     public int getCount()
     {
         return count;
     }
-    
+
     public void incrementCount()
     {
         count++;
         markDirty();
     }
-    
+
     public void decrementCount()
     {
         count--;

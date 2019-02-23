@@ -18,26 +18,37 @@ public class ModItems
 {
     // Ingots
     public static ItemOre copperIngot = new ItemOre("ingot_copper", "ingotCopper");
-    
+
     // Tools
     public static ItemAxe copperAxe = new ItemAxe(ExperimentalMod.copperToolMaterial, "copper_axe");
     public static ItemHoe copperHoe = new ItemHoe(ExperimentalMod.copperToolMaterial, "copper_hoe");
     public static ItemPickaxe copperPickaxe = new ItemPickaxe(ExperimentalMod.copperToolMaterial, "copper_pickaxe");
     public static ItemShovel copperShovel = new ItemShovel(ExperimentalMod.copperToolMaterial, "copper_shovel");
     public static ItemSword copperSword = new ItemSword(ExperimentalMod.copperToolMaterial, "copper_sword");
-    
+
     // Armor
-    public static ItemArmor copperBoots = new ItemArmor(ExperimentalMod.copperArmorMaterial, EntityEquipmentSlot.FEET, "copper_boots");
-    public static ItemArmor copperChestplate = new ItemArmor(ExperimentalMod.copperArmorMaterial, EntityEquipmentSlot.CHEST, "copper_chestplate");
-    public static ItemArmor copperHelmet = new ItemArmor(ExperimentalMod.copperArmorMaterial, EntityEquipmentSlot.HEAD, "copper_helmet");
-    public static ItemArmor copperLeggings = new ItemArmor(ExperimentalMod.copperArmorMaterial, EntityEquipmentSlot.LEGS, "copper_leggings");
-    
+    public static ItemArmor copperBoots = new ItemArmor(ExperimentalMod.copperArmorMaterial, EntityEquipmentSlot.FEET,
+            "copper_boots");
+    public static ItemArmor copperChestplate = new ItemArmor(ExperimentalMod.copperArmorMaterial,
+            EntityEquipmentSlot.CHEST, "copper_chestplate");
+    public static ItemArmor copperHelmet = new ItemArmor(ExperimentalMod.copperArmorMaterial, EntityEquipmentSlot.HEAD,
+            "copper_helmet");
+    public static ItemArmor copperLeggings = new ItemArmor(ExperimentalMod.copperArmorMaterial,
+            EntityEquipmentSlot.LEGS, "copper_leggings");
+
     // Food & Seeds
     public static ItemFoodBase corn = new ItemFoodBase("corn", "cropCorn", 3, 0.6f, false);
     public static ItemFoodBase cornBread = new ItemFoodBase("corn_bread", "", 5, 0.7f, false);
     public static ItemCornSeed cornSeed = new ItemCornSeed();
     public static ItemFoodBase creamedCornSoup = new ItemFoodBase("creamed_corn_soup", "", 6, 0.7f, false);
+
+    // Miscellaneous
+    public static ItemBase enderEyeShard = new ItemBase("ender_eye_shard");
+    public static ItemTeleportationWand teleportationWand = new ItemTeleportationWand("teleportation_wand");
+    public static ItemTeleportationSplashPotion teleportationSplashPotion = new ItemTeleportationSplashPotion("teleportation_splash_potion");
+    public static ItemTeleportationTippedArrow teleportationTippedArrow = new ItemTeleportationTippedArrow();
     
+    // @formatter:off
     public static void register(IForgeRegistry<Item> registry)
     {
         registry.registerAll(
@@ -54,31 +65,43 @@ public class ModItems
                 corn, // food
                 cornBread, 
                 cornSeed, 
-                creamedCornSoup);
+                creamedCornSoup,
+                enderEyeShard, // miscellaneous
+                teleportationWand,
+                teleportationSplashPotion,
+                teleportationTippedArrow
+                );
     }
+    // @formatter:on
 
     public static void registerModels()
     {
         // Ingots
         copperIngot.registerItemModel();
-        
+
         // Tools
         copperAxe.registerItemModel();
         copperHoe.registerItemModel();
         copperPickaxe.registerItemModel();
         copperShovel.registerItemModel();
         copperSword.registerItemModel();
-        
+
         // Armor
         copperBoots.registerItemModel();
         copperChestplate.registerItemModel();
         copperHelmet.registerItemModel();
         copperLeggings.registerItemModel();
-        
+
         // Food & Seeds
         corn.registerItemModel();
         cornBread.registerItemModel();
         cornSeed.registerItemModel();
         creamedCornSoup.registerItemModel();
+
+        // Miscellaneous
+        enderEyeShard.registerItemModel();
+        teleportationWand.registerItemModel();
+        teleportationSplashPotion.registerItemModel();
+        teleportationTippedArrow.registerItemModel();
     }
 }

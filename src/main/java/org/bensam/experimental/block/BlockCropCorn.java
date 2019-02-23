@@ -17,9 +17,9 @@ public class BlockCropCorn extends BlockCrops
 {
     public BlockCropCorn()
     {
-        setUnlocalizedName("crop_corn");
+        setTranslationKey("crop_corn");
         setRegistryName("crop_corn");
-        
+
         setCreativeTab(ExperimentalMod.creativeTab);
     }
 
@@ -34,5 +34,5 @@ public class BlockCropCorn extends BlockCrops
     {
         return ModItems.corn;
     }
-    
+
 }

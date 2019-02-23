@@ -6,6 +6,8 @@ package org.bensam.experimental.proxy;
 import org.bensam.experimental.ExperimentalMod;
 import org.bensam.experimental.block.pedestal.RendererPedestal;
 import org.bensam.experimental.block.pedestal.TileEntityPedestal;
+import org.bensam.experimental.block.teleportbeacon.RendererTeleportBeacon;
+import org.bensam.experimental.block.teleportbeacon.TileEntityTeleportBeacon;
 import org.bensam.experimental.entity.ModEntities;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -42,22 +44,25 @@ public class ClientProxy extends CommonProxy
         super.postInit(event);
     }
 
-    @Override
-    public String localize(String unlocalized, Object... args)
-    {
-        return I18n.format(unlocalized, args);
-    }
-    
+//    @Override
+//    public String localize(String unlocalized, Object... args)
+//    {
+//        return I18n.format(unlocalized, args);
+//    }
+
     @Override
     public void registerItemRenderer(Item item, int meta, String id)
     {
-        ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(ExperimentalMod.MODID + ":" + id, "inventory"));
+        ModelLoader.setCustomModelResourceLocation(item, meta,
+                new ModelResourceLocation(ExperimentalMod.MODID + ":" + id, "inventory"));
+        // TODO: should use item.g﻿etRegistryName() for first parameter in new MRL(...)
     }
 
     @Override
     public void registerRenderers()
     {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPedestal.class, new RendererPedestal());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTeleportBeacon.class, new RendererTeleportBeacon());
         ModEntities.registerRenderer();
     }
 

@@ -46,35 +46,29 @@ public class BlockPedestal extends BlockTileEntity<TileEntityPedestal>
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.bensam.experimental.block.BlockTileEntity#getTileEntityClass()
-     */
     @Override
     public Class<TileEntityPedestal> getTileEntityClass()
     {
         return TileEntityPedestal.class;
     }
-    
-    /* (non-Javadoc)
-     * @see org.bensam.experimental.block.BlockTileEntity#createTileEntity(net.minecraft.world.World, net.minecraft.block.state.IBlockState)
-     */
+
     @Nullable
     @Override
     public TileEntityPedestal createTileEntity(World world, IBlockState state)
     {
         return new TileEntityPedestal();
     }
-    
+
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-            EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+                                    EnumFacing facing, float hitX, float hitY, float hitZ)
     {
         if (!world.isRemote) // i.e. running on the server thread
         {
             ItemStack heldItem = player.getHeldItem(hand);
             TileEntityPedestal tile = getTileEntity(world, pos);
             IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing); // object that stores the pedestal's inventory
-            
+
             if (!player.isSneaking())
             {
                 if (heldItem.isEmpty())
@@ -89,21 +83,22 @@ public class BlockPedestal extends BlockTileEntity<TileEntityPedestal>
             }
             else
             {
-//                ItemStack stack = itemHandler.getStackInSlot(0);
-//                if (!stack.isEmpty())
-//                {
-//                    String localized = ExperimentalMod.proxy.localize(stack.getUnlocalizedName() + ".name");
-//                    player.sendMessage(new TextComponentString(stack.getCount() + "x " + localized));
-//                }
-//                else
-//                {
-//                    player.sendMessage(new TextComponentString("Empty"));
-//                    // or use localization like: new TextComponentTranslation("tile.tutorial.pedestal.empty")
-//                }
-                player.openGui(ExperimentalMod.instance, ModGuiHandler.PEDESTAL, world, pos.getX(), pos.getY(), pos.getZ());
+                // ItemStack stack = itemHandler.getStackInSlot(0);
+                // if (!stack.isEmpty())
+                // {
+                //     String localized = ExperimentalMod.proxy.localize(stack.getUnlocalizedName() + ".name");
+                //     player.sendMessage(new TextComponentString(stack.getCount() + "x " + localized));
+                // }
+                // else
+                // {
+                //     player.sendMessage(new TextComponentString("Empty"));
+                //     // or use localization like: new TextComponentTranslation("tile.tutorial.pedestal.empty")
+                // }
+                player.openGui(ExperimentalMod.instance, ModGuiHandler.PEDESTAL, world, pos.getX(), pos.getY(),
+                        pos.getZ());
             }
         }
-        
+
         return true;
     }
 
@@ -113,13 +108,13 @@ public class BlockPedestal extends BlockTileEntity<TileEntityPedestal>
         TileEntityPedestal tile = getTileEntity(world, pos);
         IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH);
         ItemStack stack = itemHandler.getStackInSlot(0);
-        
+
         if (!stack.isEmpty())
         {
             EntityItem item = new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack);
             world.spawnEntity(item);
         }
-        
+
         super.breakBlock(world, pos, state);
     }
 }

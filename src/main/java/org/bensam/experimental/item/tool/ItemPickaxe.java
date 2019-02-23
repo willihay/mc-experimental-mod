@@ -12,13 +12,13 @@ import org.bensam.experimental.ExperimentalMod;
 public class ItemPickaxe extends net.minecraft.item.ItemPickaxe
 {
     private String name;
-    
+
     public ItemPickaxe(ToolMaterial material, String name)
     {
         super(material);
-        
+
         setRegistryName(name);
-        setUnlocalizedName(name);
+        setTranslationKey(name);
         this.name = name;
     }
 

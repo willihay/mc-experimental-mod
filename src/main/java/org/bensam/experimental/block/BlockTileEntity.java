@@ -1,6 +1,6 @@
 /**
- * BlockTileEntity - abstract convenience class for adding a non-ticking TileEntity so that we 
- * can associate unique data to an instance of a block in the world   
+ * BlockTileEntity - abstract convenience class for adding a non-ticking TileEntity so that we can associate unique data
+ * to an instance of a block in the world
  */
 package org.bensam.experimental.block;
 
@@ -25,10 +25,10 @@ public abstract class BlockTileEntity<TE extends TileEntity> extends BlockBase
     }
 
     public abstract Class<TE> getTileEntityClass();
-    
+
     public TE getTileEntity(IBlockAccess world, BlockPos pos)
     {
-        return (TE)world.getTileEntity(pos);
+        return (TE) world.getTileEntity(pos);
     }
 
     @Override
@@ -40,5 +40,5 @@ public abstract class BlockTileEntity<TE extends TileEntity> extends BlockBase
     @Nullable
     @Override
     public abstract TE createTileEntity(World world, IBlockState state);
-    
+
 }

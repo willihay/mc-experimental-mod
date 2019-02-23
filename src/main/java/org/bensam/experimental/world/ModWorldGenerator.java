@@ -27,7 +27,7 @@ public class ModWorldGenerator implements IWorldGenerator
      */
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator,
-            IChunkProvider chunkProvider)
+                         IChunkProvider chunkProvider)
     {
         if (world.provider.getDimension() == 0) // the overworld
         {
@@ -36,16 +36,18 @@ public class ModWorldGenerator implements IWorldGenerator
     }
 
     private void generateOverworld(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator,
-            IChunkProvider chunkProvider)
+                                   IChunkProvider chunkProvider)
     {
         // Note: chunks are 16 x 16
-        generateOre(ModBlocks.copperOre.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 16, 64, 4 + random.nextInt(4), 18);
+        generateOre(ModBlocks.copperOre.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 16, 64,
+                4 + random.nextInt(4), 18);
     }
-    
-    private void generateOre(IBlockState ore, World world, Random random, int x, int z, int minY, int maxY, int size, int chances)
+
+    private void generateOre(IBlockState ore, World world, Random random, int x, int z, int minY, int maxY, int size,
+                             int chances)
     {
         int deltaY = maxY - minY;
-        
+
         for (int i = 0; i < chances; i++)
         {
             BlockPos pos = new BlockPos(x + random.nextInt(16), minY + random.nextInt(deltaY), z + random.nextInt(16));

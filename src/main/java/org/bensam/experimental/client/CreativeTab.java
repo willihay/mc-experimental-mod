@@ -8,6 +8,8 @@ import org.bensam.experimental.item.ModItems;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * @author Will
@@ -20,9 +22,10 @@ public class CreativeTab extends CreativeTabs
     {
         super(ExperimentalMod.MODID);
     }
-    
+
     @Override
-    public ItemStack getTabIconItem()
+    @SideOnly(Side.CLIENT)
+    public ItemStack createIcon()
     {
         return new ItemStack(ModItems.copperIngot);
     }

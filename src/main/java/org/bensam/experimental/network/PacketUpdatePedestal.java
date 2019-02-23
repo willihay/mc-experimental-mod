@@ -1,7 +1,3 @@
-/**
- * PacketUpdatePedestal - sent from server to client to update the item stored in the pedestal on the client,
- * used whenever the item changes on the server
- */
 package org.bensam.experimental.network;
 
 import org.bensam.experimental.block.pedestal.TileEntityPedestal;
@@ -16,15 +12,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
- * @author Will
- *
+ * PacketUpdatePedestal - sent from server to client to update the item stored in the pedestal on the client, used
+ * whenever the item changes on the server
  */
 public class PacketUpdatePedestal implements IMessage
 {
     private BlockPos pos;
     private ItemStack itemStack;
     private long lastChangeTime;
-    
+
     public PacketUpdatePedestal(BlockPos pos, ItemStack itemStack, long lastChangeTime)
     {
         this.pos = pos;
@@ -36,34 +32,30 @@ public class PacketUpdatePedestal implements IMessage
     {
         this(te.getPos(), te.inventory.getStackInSlot(0), te.lastChangeTime);
     }
-    
+
     /*
      * Constructor for Forge to call via reflection, which will then call fromBytes() to initialize fields
      */
     public PacketUpdatePedestal()
     {}
-    
+
     public static class Handler implements IMessageHandler<PacketUpdatePedestal, IMessage>
     {
-        /* (non-Javadoc)
-         * @see net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler#onMessage(net.minecraftforge.fml.common.network.simpleimpl.IMessage, net.minecraftforge.fml.common.network.simpleimpl.MessageContext)
-         */
         @Override
         public IMessage onMessage(PacketUpdatePedestal message, MessageContext ctx)
         {
+            // Update the pedestal in the client, scheduling this execution on the main thread instead of the Netty networking thread.
             Minecraft.getMinecraft().addScheduledTask(() ->
             {
-               TileEntityPedestal te = (TileEntityPedestal)Minecraft.getMinecraft().world.getTileEntity(message.pos);
-               te.inventory.setStackInSlot(0, message.itemStack);
-               te.lastChangeTime = message.lastChangeTime;
+                TileEntityPedestal te = (TileEntityPedestal) Minecraft.getMinecraft().world.getTileEntity(message.pos);
+                te.inventory.setStackInSlot(0, message.itemStack);
+                te.lastChangeTime = message.lastChangeTime;
             });
+            
             return null;
         }
-        
     }
-    /* (non-Javadoc)
-     * @see net.minecraftforge.fml.common.network.simpleimpl.IMessage#fromBytes(io.netty.buffer.ByteBuf)
-     */
+
     @Override
     public void fromBytes(ByteBuf buf)
     {
@@ -72,9 +64,6 @@ public class PacketUpdatePedestal implements IMessage
         lastChangeTime = buf.readLong();
     }
 
-    /* (non-Javadoc)
-     * @see net.minecraftforge.fml.common.network.simpleimpl.IMessage#toBytes(io.netty.buffer.ByteBuf)
-     */
     @Override
     public void toBytes(ByteBuf buf)
     {

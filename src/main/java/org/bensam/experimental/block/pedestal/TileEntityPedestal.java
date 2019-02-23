@@ -26,6 +26,7 @@ public class TileEntityPedestal extends TileEntity
 {
     public long lastChangeTime;
 
+    // @formatter:off
     public ItemStackHandler inventory = new ItemStackHandler(1)
     {
         @Override
@@ -41,10 +42,8 @@ public class TileEntityPedestal extends TileEntity
             }
         }
     };
+    // @formatter:on
 
-    /* (non-Javadoc)
-     * @see net.minecraft.tileentity.TileEntity#onLoad()
-     */
     @Override
     public void onLoad()
     {
@@ -56,18 +55,12 @@ public class TileEntityPedestal extends TileEntity
         }
     }
 
-    /* (non-Javadoc)
-     * @see net.minecraft.tileentity.TileEntity#getRenderBoundingBox()
-     */
     @Override
     public AxisAlignedBB getRenderBoundingBox()
     {
         return new AxisAlignedBB(getPos(), getPos().add(1, 2, 1));
     }
 
-    /* (non-Javadoc)
-     * @see net.minecraft.tileentity.TileEntity#readFromNBT(net.minecraft.nbt.NBTTagCompound)
-     */
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
@@ -76,9 +69,6 @@ public class TileEntityPedestal extends TileEntity
         super.readFromNBT(compound);
     }
 
-    /* (non-Javadoc)
-     * @see net.minecraft.tileentity.TileEntity#writeToNBT(net.minecraft.nbt.NBTTagCompound)
-     */
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
@@ -87,22 +77,18 @@ public class TileEntityPedestal extends TileEntity
         return super.writeToNBT(compound);
     }
 
-    /* (non-Javadoc)
-     * @see net.minecraft.tileentity.TileEntity#hasCapability(net.minecraftforge.common.capabilities.Capability, net.minecraft.util.EnumFacing)
-     */
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
     {
         return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
     }
-    
-    /* (non-Javadoc)
-     * @see net.minecraft.tileentity.TileEntity#getCapability(net.minecraftforge.common.capabilities.Capability, net.minecraft.util.EnumFacing)
-     */
+
+    // @formatter:off
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
     {
         return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? (T)inventory : super.getCapability(capability, facing);
     }
+    // @formatter:on
 }

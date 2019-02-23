@@ -19,14 +19,9 @@ import net.minecraftforge.fml.client.registry.IRenderFactory;
 public class RenderHealthZombie extends RenderLiving<EntityHealthZombie>
 {
     private ResourceLocation mobTexture = new ResourceLocation("experimental:textures/entity/health_zombie.png");
-    
+
     public static final Factory RENDER_FACTORY = new Factory();
-    
-    /**
-     * @param rendermanagerIn
-     * @param modelbaseIn
-     * @param shadowsizeIn
-     */
+
     public RenderHealthZombie(RenderManager rendermanager)
     {
         super(rendermanager, new ModelZombie(), 0.5f); // reuses vanilla zombie model

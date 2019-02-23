@@ -12,13 +12,13 @@ import org.bensam.experimental.ExperimentalMod;
 public class ItemSword extends net.minecraft.item.ItemSword
 {
     private String name;
-    
+
     public ItemSword(ToolMaterial material, String name)
     {
         super(material);
-        
+
         setRegistryName(name);
-        setUnlocalizedName(name);
+        setTranslationKey(name);
         this.name = name;
     }
 

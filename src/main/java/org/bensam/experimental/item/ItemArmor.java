@@ -14,13 +14,13 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 public class ItemArmor extends net.minecraft.item.ItemArmor
 {
     private String name;
-    
+
     public ItemArmor(ArmorMaterial material, EntityEquipmentSlot equipmentSlot, String name)
     {
         super(material, 0, equipmentSlot);
 
         setRegistryName(name);
-        setUnlocalizedName(name);
+        setTranslationKey(name);
         this.name = name;
     }
 

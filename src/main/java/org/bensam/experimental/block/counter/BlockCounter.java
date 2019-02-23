@@ -27,18 +27,12 @@ public class BlockCounter extends BlockTileEntity<TileEntityCounter>
         super(Material.ROCK, "counter");
     }
 
-    /* (non-Javadoc)
-     * @see org.bensam.experimental.block.BlockTileEntity#getTileEntityClass()
-     */
     @Override
     public Class<TileEntityCounter> getTileEntityClass()
     {
         return TileEntityCounter.class;
     }
 
-    /* (non-Javadoc)
-     * @see org.bensam.experimental.block.BlockTileEntity#createTileEntity(net.minecraft.world.World, net.minecraft.block.state.IBlockState)
-     */
     @Nullable
     @Override
     public TileEntityCounter createTileEntity(World world, IBlockState state)
@@ -47,8 +41,8 @@ public class BlockCounter extends BlockTileEntity<TileEntityCounter>
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-            EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+                                    EnumFacing facing, float hitX, float hitY, float hitZ)
     {
         if (!world.isRemote) // i.e. running on the server thread
         {
@@ -63,7 +57,7 @@ public class BlockCounter extends BlockTileEntity<TileEntityCounter>
             }
             player.sendMessage(new TextComponentString("Count: " + tile.getCount()));
         }
-        
+
         return true;
     }
 

@@ -38,10 +38,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class EntityHealthZombie extends EntityMob
 {
     // Vanilla zombies have arms that raise when attacking
-    private static final DataParameter<Boolean> ARMS_RAISED = EntityDataManager.createKey(EntityHealthZombie.class, DataSerializers.BOOLEAN);
-    
+    private static final DataParameter<Boolean> ARMS_RAISED = EntityDataManager.createKey(EntityHealthZombie.class,
+            DataSerializers.BOOLEAN);
+
     public static final ResourceLocation LOOT = new ResourceLocation(ExperimentalMod.MODID, "entities/health_zombie");
-    
+
     public EntityHealthZombie(World world)
     {
         super(world);
@@ -80,7 +81,7 @@ public class EntityHealthZombie extends EntityMob
     protected void applyEntityAI()
     {
         this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[] {EntityPigZombie.class}));
+        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[] { EntityPigZombie.class }));
         this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
         this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityVillager.class, false));
         this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityIronGolem.class, true));
@@ -94,15 +95,13 @@ public class EntityHealthZombie extends EntityMob
             if (entityIn instanceof EntityLivingBase)
             {
                 // Give health boost and regeneration when this zombie attacks
-                ((EntityLivingBase)entityIn).addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, 200));
-                ((EntityLivingBase)entityIn).addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 200));
+                ((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, 200));
+                ((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 200));
             }
             return true;
         }
         else
-        {
             return false;
-        }
     }
 
     @Override
@@ -116,7 +115,7 @@ public class EntityHealthZombie extends EntityMob
     {
         return 5;
     }
-    
+
     @Override
     protected boolean isValidLightLevel()
     {
@@ -128,10 +127,10 @@ public class EntityHealthZombie extends EntityMob
     {
         return this.getDataManager().get(ARMS_RAISED).booleanValue();
     }
-    
+
     public void setArmsRaised(boolean armsRaised)
     {
         this.getDataManager().set(ARMS_RAISED, Boolean.valueOf(armsRaised));
     }
-    
+
 }

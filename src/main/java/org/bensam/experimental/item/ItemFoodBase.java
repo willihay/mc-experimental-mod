@@ -16,19 +16,19 @@ public class ItemFoodBase extends ItemFood
 {
     private String name;
     private String oreName;
-    
+
     public ItemFoodBase(String name, String oreName, int amount, float saturation, boolean isWolfFood)
     {
         super(amount, saturation, isWolfFood);
-        
+
         this.name = name;
-        setUnlocalizedName(name); // used for translating the name of the item into the currently active language
+        setTranslationKey(name); // used for translating the name of the item into the currently active language
         setRegistryName(name); // used when registering our item with Forge
-        
+
         this.oreName = oreName;
         setCreativeTab(ExperimentalMod.creativeTab);
     }
-    
+
     public void registerItemModel()
     {
         ExperimentalMod.proxy.registerItemRenderer(this, 0, name);

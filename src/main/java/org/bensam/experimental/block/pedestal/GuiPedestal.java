@@ -19,19 +19,17 @@ import net.minecraft.util.ResourceLocation;
  */
 public class GuiPedestal extends GuiContainer
 {
-    private static final ResourceLocation BG_TEXTURE = new ResourceLocation(ExperimentalMod.MODID, "textures/gui/pedestal.png");
+    private static final ResourceLocation BG_TEXTURE = new ResourceLocation(ExperimentalMod.MODID,
+            "textures/gui/pedestal.png");
     private InventoryPlayer playerInventory;
-    
+
     public GuiPedestal(Container container, InventoryPlayer playerInventory)
     {
         super(container);
-        
+
         this.playerInventory = playerInventory;
     }
-    
-    /* (non-Javadoc)
-     * @see net.minecraft.client.gui.inventory.GuiContainer#drawGuiContainerBackgroundLayer(float, int, int)
-     */
+
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
     {
@@ -42,13 +40,10 @@ public class GuiPedestal extends GuiContainer
         drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
     }
 
-    /* (non-Javadoc)
-     * @see net.minecraft.client.gui.inventory.GuiContainer#drawGuiContainerForegroundLayer(int, int)
-     */
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
     {
-        String name = I18n.format(ModBlocks.pedestal.getUnlocalizedName() + ".name");
+        String name = I18n.format(ModBlocks.pedestal.getTranslationKey() + ".name");
         fontRenderer.drawString(name, xSize / 2 - fontRenderer.getStringWidth(name), 6, 0x404040);
         fontRenderer.drawString(playerInventory.getDisplayName().getUnformattedText(), 8, ySize - 94, 0x404040);
     }
