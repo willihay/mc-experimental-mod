@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		" LE",
+		" SL",
+		"S  "
+	],
+	"key": {
+		"E": {
+			"item": "minecraft:ender_eye"
+		},
+		"L": {
+			"item": "minecraft:dye",
+			"data": 4
+		},
+		"S": {
+			"item": "minecraft:stick"
+		}
+	},
+	"result": {
+		"item": "experimental:teleportation_wand"
+	}
+}

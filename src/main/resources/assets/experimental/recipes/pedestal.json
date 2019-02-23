@@ -1,0 +1,30 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"LLL",
+		"LRL",
+		" S "
+	],
+	"key": {
+		"S": {
+			"item": "minecraft:stone",
+			"data": 0
+		},
+		"R": {
+			"item": "minecraft:redstone"
+		},
+		"L": [
+		  {
+			"item": "minecraft:stone_slab",
+			"data": 0
+		  },
+		  {
+			"item": "minecraft:stone_slab",
+			"data": 5
+		  }
+		]
+	},
+	"result": {
+		"item": "experimental:pedestal"
+	}
+}

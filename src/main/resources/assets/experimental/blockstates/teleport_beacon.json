@@ -1,0 +1,12 @@
+{
+	"forge_marker": 1,
+	"variants": {
+		"normal": {
+			"model": "experimental:teleport_beacon"
+		},
+		"inventory": {
+			"model": "experimental:teleport_beacon",
+			"transform": "forge:default-block"
+		}
+	}
+}

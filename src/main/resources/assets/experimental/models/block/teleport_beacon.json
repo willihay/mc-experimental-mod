@@ -1,0 +1,93 @@
+{
+	"textures": {
+		"pedestal_top": "blocks/lapis_block",
+		"pedestal": "blocks/obsidian",
+		"pedestal_base": "blocks/stonebrick",
+		"particle": "blocks/obsidian"
+	},
+	"elements": [
+		{
+			"from": [1, 0, 1],
+			"to": [15, 7, 15],
+			"faces": {
+				"down": {
+					"uv": [0, 0, 14, 14],
+					"texture": "#pedestal_base",
+					"cullface": "down"
+				},
+				"up": {
+					"uv": [0, 0, 14, 14],
+					"texture": "#pedestal_base"
+				},
+				"north": {
+					"uv": [1, 0, 15, 7],
+					"texture": "#pedestal_base"
+				},
+				"south": {
+					"uv": [1, 0, 15, 7],
+					"texture": "#pedestal_base"
+				},
+				"west": {
+					"uv": [1, 0, 15, 7],
+					"texture": "#pedestal_base"
+				},
+				"east": {
+					"uv": [1, 0, 15, 7],
+					"texture": "#pedestal_base"
+				}
+			}
+		},
+		{
+			"from": [3, 7, 3],
+			"to": [13, 14, 13],
+			"faces": {
+				"up": {
+					"uv": [0, 0, 10, 10],
+					"texture": "#pedestal"
+				},
+				"north": {
+					"uv": [0, 0, 10, 7],
+					"texture": "#pedestal"
+				},
+				"south": {
+					"uv": [0, 0, 10, 7],
+					"texture": "#pedestal"
+				},
+				"west": {
+					"uv": [0, 0, 10, 7],
+					"texture": "#pedestal"
+				},
+				"east": {
+					"uv": [0, 0, 10, 7],
+					"texture": "#pedestal"
+				}
+			}
+		},
+		{
+			"from": [5, 14, 5],
+			"to": [11, 15, 11],
+			"faces": {
+				"up": {
+					"uv": [0, 0, 6, 6],
+					"texture": "#pedestal_top"
+				},
+				"north": {
+					"uv": [0, 0, 6, 1],
+					"texture": "#pedestal_top"
+				},
+				"south": {
+					"uv": [0, 0, 6, 1],
+					"texture": "#pedestal_top"
+				},
+				"west": {
+					"uv": [0, 0, 6, 1],
+					"texture": "#pedestal_top"
+				},
+				"east": {
+					"uv": [0, 0, 6, 1],
+					"texture": "#pedestal_top"
+				}
+			}
+		}
+	]
+}

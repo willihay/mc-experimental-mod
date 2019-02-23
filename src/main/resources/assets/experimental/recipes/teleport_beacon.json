@@ -1,0 +1,32 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		" E ",
+		"OLO",
+		"SSS"
+	],
+	"key": {
+		"E": {
+			"item": "minecraft:ender_eye"
+		},
+		"O": {
+			"item": "minecraft:obsidian"
+		},
+		"L": {
+			"item": "minecraft:lapis_block"
+		},
+		"S": [
+		  {
+			"item": "minecraft:stone_slab",
+			"data": 0
+		  },
+		  {
+			"item": "minecraft:stone_slab",
+			"data": 5
+		  }
+		]
+	},
+	"result": {
+		"item": "experimental:teleport_beacon"
+	}
+}

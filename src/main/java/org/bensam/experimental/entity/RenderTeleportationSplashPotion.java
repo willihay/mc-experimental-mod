@@ -1,0 +1,29 @@
+package org.bensam.experimental.entity;
+
+import org.bensam.experimental.item.ModItems;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.RenderSnowball;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
+
+public class RenderTeleportationSplashPotion extends RenderSnowball<EntityTeleportationSplashPotion>
+{
+    public static final Factory RENDER_FACTORY = new Factory();
+
+    public RenderTeleportationSplashPotion(RenderManager renderManager, RenderItem itemRenderer)
+    {
+        super(renderManager, ModItems.teleportationSplashPotion, itemRenderer);
+    }
+
+    public static class Factory implements IRenderFactory<EntityTeleportationSplashPotion>
+    {
+        @Override
+        public Render<? super EntityTeleportationSplashPotion> createRenderFor(RenderManager manager)
+        {
+            return new RenderTeleportationSplashPotion(manager, Minecraft.getMinecraft().getRenderItem());
+        }
+    }
+}
