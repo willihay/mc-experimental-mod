@@ -291,7 +291,7 @@ public class ItemTeleportationWand extends ItemBase
                 {
                     if (teleportationHandler.validateDestination((EntityPlayer) entityLiving, activeTeleportDestination))
                     {
-                        TeleportationHelper.teleport(entityLiving, activeTeleportDestination);
+                        TeleportationHelper.teleport(entityLiving, activeTeleportDestination, true);
                     }
                     else if (activeTeleportDestination.destinationType != DestinationType.SPAWNBED || activeTeleportDestination.dimension != 0)
                     {

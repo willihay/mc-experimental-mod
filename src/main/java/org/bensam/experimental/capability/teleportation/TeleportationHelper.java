@@ -117,39 +117,43 @@ public class TeleportationHelper
         return null;
     }
 
-    public static void teleportOther(EntityLivingBase entityToTeleport, TileEntity tileEntityInitiatingTeleport)
+    public static Entity teleportOther(Entity entityToTeleport, TileEntity tileEntityInitiatingTeleport, boolean rotateToFaceIfBeacon)
     {
         ITeleportationHandler teleportationHandler = tileEntityInitiatingTeleport.getCapability(TeleportationHandlerCapabilityProvider.TELEPORTATION_CAPABILITY, null);
         if (teleportationHandler != null)
         {
             TeleportDestination activeTeleportDestination = teleportationHandler.getActiveDestination();
-            if (activeTeleportDestination == null)
-                return;
-            
-            if (teleportationHandler.validateDestination((Entity) null, activeTeleportDestination))
+            if (activeTeleportDestination != null)
             {
-                teleport(entityToTeleport, activeTeleportDestination);
+                if (teleportationHandler.validateDestination((Entity) null, activeTeleportDestination))
+                {
+                    return teleport(entityToTeleport, activeTeleportDestination, rotateToFaceIfBeacon);
+                }
             }
         }
+        
+        return entityToTeleport;
     }
     
-    public static void teleportOther(EntityLivingBase entityToTeleport, Entity entityInitiatingTeleport)
+    public static Entity teleportOther(Entity entityToTeleport, Entity entityInitiatingTeleport, boolean rotateToFaceIfBeacon)
     {
         ITeleportationHandler teleportationHandler = entityInitiatingTeleport.getCapability(TeleportationHandlerCapabilityProvider.TELEPORTATION_CAPABILITY, null);
         if (teleportationHandler != null)
         {
             TeleportDestination activeTeleportDestination = teleportationHandler.getActiveDestination();
-            if (activeTeleportDestination == null)
-                return;
-            
-            if (teleportationHandler.validateDestination(entityInitiatingTeleport, activeTeleportDestination))
+            if (activeTeleportDestination != null)
             {
-                teleport(entityToTeleport, activeTeleportDestination);
+                if (teleportationHandler.validateDestination(entityInitiatingTeleport, activeTeleportDestination))
+                {
+                    return teleport(entityToTeleport, activeTeleportDestination, rotateToFaceIfBeacon);
+                }
             }
-        }        
+        }
+        
+        return entityToTeleport;
     }
     
-    public static void teleport(Entity entityToTeleport, TeleportDestination destination)
+    public static Entity teleport(Entity entityToTeleport, TeleportDestination destination, boolean rotateToFaceIfBeacon)
     {
         World currentWorld = entityToTeleport.world;
         int teleportDimension = destination.dimension;
@@ -165,7 +169,10 @@ public class TeleportationHelper
             break;
         case BEACON:
             safePos = findSafeTeleportPosAroundDestination(teleportWorld, destination.position, destination.preferredTeleportFace);
-            rotationYaw = ModHelper.getRotationFromFacing(destination.preferredTeleportFace.getOpposite());
+            if (rotateToFaceIfBeacon)
+            {
+                rotationYaw = ModHelper.getRotationFromFacing(destination.preferredTeleportFace.getOpposite());
+            }
             break;
         case BLOCKPOS:
             IBlockState state = teleportWorld.getBlockState(destination.position);
@@ -180,16 +187,16 @@ public class TeleportationHelper
         }
         
         if (safePos == null)
-            return;
+            return entityToTeleport;
         
-        teleport(currentWorld, entityToTeleport, teleportDimension, safePos, rotationYaw);
+        return teleport(currentWorld, entityToTeleport, teleportDimension, safePos, rotationYaw);
     }
     
-    public static void teleport(World currentWorld, Entity entityToTeleport, int teleportDimension,
+    public static Entity teleport(World currentWorld, Entity entityToTeleport, int teleportDimension,
                                 BlockPos teleportPos, float playerRotationYaw)
     {
         if (currentWorld.isRemote) // running on client
-            return;
+            return entityToTeleport;
 
         int entityCurrentDimension = entityToTeleport.dimension;
         WorldServer teleportWorld = ModHelper.getWorldServerForDimension(teleportDimension);
@@ -221,7 +228,7 @@ public class TeleportationHelper
             else if (entityToTeleport instanceof EntityLivingBase)
             {
                 ExperimentalMod.logger.info("Using CustomTeleporter to teleport " + entityToTeleport.getDisplayName().getFormattedText() + " to dimension " + teleportDimension);
-                entityToTeleport.changeDimension(teleportDimension, new CustomTeleporter(teleportWorld, teleportPos));
+                entityToTeleport = entityToTeleport.changeDimension(teleportDimension, new CustomTeleporter(teleportWorld, teleportPos));
             }
         }
         else
@@ -246,5 +253,7 @@ public class TeleportationHelper
                 SoundCategory.PLAYERS, 1.0F, 1.0F);
         teleportWorld.playSound((EntityPlayer) null, teleportPos, SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT,
                 SoundCategory.PLAYERS, 1.0F, 1.0F);
+        
+        return entityToTeleport;
     }
 }

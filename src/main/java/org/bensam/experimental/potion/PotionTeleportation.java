@@ -26,35 +26,36 @@ public class PotionTeleportation extends PotionBase
      * Called when entity is affected by a Splash Potion of Teleportation or hit by an Arrow of Teleportation
      * thrown by a TileEntity (e.g. dispenser).
      */
-    public void affectEntity(@Nullable Entity source, @Nullable TileEntity indirectSource,
-                             EntityLivingBase entityLivingBase)
+    public Entity affectEntity(@Nullable Entity source, @Nullable TileEntity indirectSource, Entity entityAffected, boolean rotateToFaceIfBeacon)
     {
-        ExperimentalMod.logger.info("PotionTeleportation.affectEntity " + entityLivingBase.getDisplayName().getFormattedText() + " from TileEntity");
+        ExperimentalMod.logger.info("PotionTeleportation.affectEntity " + entityAffected.getDisplayName().getFormattedText() + " from TileEntity");
         
-        World world = entityLivingBase.world;
+        World world = entityAffected.world;
         
         if (!world.isRemote && indirectSource != null) // running on server
         {
-            TeleportationHelper.teleportOther(entityLivingBase, indirectSource);
+            return TeleportationHelper.teleportOther(entityAffected, indirectSource, rotateToFaceIfBeacon);
         }
+        
+        return entityAffected;
     }
 
     /*
      * Called when entity is affected by a Splash Potion of Teleportation or hit by an Arrow of Teleportation
      * thrown/shot by a living entity (e.g. player).
      */
-    @Override
-    public void affectEntity(@Nullable Entity source, @Nullable Entity indirectSource,
-                             EntityLivingBase entityLivingBase, int amplifier, double health)
+    public Entity affectEntity(@Nullable Entity source, @Nullable Entity indirectSource, Entity entityAffected, boolean rotateToFaceIfBeacon)
     {
-        ExperimentalMod.logger.info("PotionTeleportation.affectEntity " + entityLivingBase.getDisplayName().getFormattedText() + " from Entity");
+        ExperimentalMod.logger.info("PotionTeleportation.affectEntity " + entityAffected.getDisplayName().getFormattedText() + " from Entity");
         
-        World world = entityLivingBase.world;
+        World world = entityAffected.world;
         
         if (!world.isRemote && indirectSource != null) // running on server
         {
-            TeleportationHelper.teleportOther(entityLivingBase, indirectSource);
+            return TeleportationHelper.teleportOther(entityAffected, indirectSource, rotateToFaceIfBeacon);
         }
+        
+        return entityAffected;
     }
 
     /*

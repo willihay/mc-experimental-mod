@@ -64,7 +64,7 @@ public class ItemTeleportationSplashPotion extends ItemBase
         if (!world.isRemote)
         {
             EntityTeleportationSplashPotion entityPotion = new EntityTeleportationSplashPotion(world, player);
-            entityPotion.shoot(player, player.rotationPitch, player.rotationYaw, -20.0F, 0.5F, 1.0F);
+            entityPotion.shoot(player, player.rotationPitch, player.rotationYaw, -20.0F, 0.75F, 1.0F); // slightly higher velocity than the typical potion (0.75 vs. 0.5), for a greater range
             world.spawnEntity(entityPotion);
         }
 

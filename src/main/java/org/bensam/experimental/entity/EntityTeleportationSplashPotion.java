@@ -1,11 +1,17 @@
 package org.bensam.experimental.entity;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.bensam.experimental.potion.PotionTeleportation;
 
 import net.minecraft.dispenser.IBlockSource;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -77,7 +83,8 @@ public class EntityTeleportationSplashPotion extends EntityThrowable
     private void applySplash(RayTraceResult result, PotionTeleportation potion)
     {
         AxisAlignedBB axisalignedbb = this.getEntityBoundingBox().grow(4.0D, 2.0D, 4.0D);
-        List<EntityLivingBase> list = this.world.<EntityLivingBase>getEntitiesWithinAABB(EntityLivingBase.class, axisalignedbb);
+        //List<Entity> list = this.world.<Entity>getEntitiesWithinAABB(EntityLivingBase.class, axisalignedbb);
+        List<Entity> list = this.world.<Entity>getEntitiesWithinAABB(Entity.class, axisalignedbb);
 
         if (list.isEmpty())
         {
@@ -85,31 +92,77 @@ public class EntityTeleportationSplashPotion extends EntityThrowable
         }
         else 
         {
-            for (EntityLivingBase entityLivingBase : list)
+            HashMap<Entity, Entity> riderMap = getRiders(list);
+            
+            // Add any entities being ridden to the list of entities to teleport if they aren't already included in that list. 
+            for (Entity entityRidden : riderMap.values())
             {
-                if (entityLivingBase.canBeHitWithPotion())
+                if (!list.contains(entityRidden))
                 {
-                    double d0 = this.getDistanceSq(entityLivingBase);
+                    list.add(entityRidden);
+                }
+            }
+            
+            for (Entity entityToTeleport : list)
+            {
+                Entity teleportedEntity = null;
+                boolean hasPassengers = riderMap.containsValue(entityToTeleport);
 
-                    if (d0 < 16.0D)
+                EntityLivingBase thrower = this.getThrower();
+                if (thrower != null)
+                {
+                    teleportedEntity = potion.affectEntity(this, thrower, entityToTeleport, false);
+                }
+                else if (sourceTileEntity != null)
+                {
+                    teleportedEntity = potion.affectEntity(this, sourceTileEntity, entityToTeleport, false);
+                }
+                
+                if (hasPassengers && (entityToTeleport != teleportedEntity))
+                {
+                    // Non-player entities get cloned when they teleport across dimensions. Update the riderMap with the new object.
+                    for (Map.Entry<Entity, Entity> riderSet : riderMap.entrySet())
                     {
-                        EntityLivingBase thrower = this.getThrower();
-                        if (thrower != null)
+                        if (riderSet.getValue() == entityToTeleport)
                         {
-                            potion.affectEntity(this, thrower, entityLivingBase, 0, 0.0D);
-                        }
-                        else if (sourceTileEntity != null)
-                        {
-                            potion.affectEntity(this, sourceTileEntity, entityLivingBase);
+                            riderSet.setValue(teleportedEntity);
                         }
                     }
                 }
             }
             
-            setDeadNextUpdate = true;
+            for (Map.Entry<Entity, Entity> riderSet : riderMap.entrySet())
+            {
+                Entity rider = riderSet.getKey();
+                Entity entityRidden = riderSet.getValue();
+                
+                if (!rider.isRiding() 
+                        && rider.dimension == entityRidden.dimension 
+                        && (rider.getPosition().distanceSqToCenter(entityRidden.posX, entityRidden.posY, entityRidden.posZ) < 4.0D))
+                {
+                    rider.startRiding(entityRidden, true);
+                }
+            }
+            
+            this.setDeadNextUpdate = true;
         }
     }
     
+    private HashMap<Entity, Entity> getRiders(List<Entity> list)
+    {
+        HashMap<Entity, Entity> riderMap = new HashMap<Entity, Entity>();
+        
+        for (Entity entity : list)
+        {
+            if (entity.isRiding())
+            {
+                riderMap.put(entity, entity.getRidingEntity());
+            }
+        }
+        
+        return riderMap;
+    }
+
     @Override
     public void writeEntityToNBT(NBTTagCompound compound)
     {
