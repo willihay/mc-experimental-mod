@@ -23,11 +23,11 @@ public class CustomTeleporter implements ITeleporter
     {
         if (entity instanceof EntityPlayerMP)
         {
-            ((EntityPlayerMP)entity).connection.setPlayerLocation(teleportPos.getX() + 0.5D, teleportPos.getY(), teleportPos.getZ() + 0.5D, yaw, entity.rotationPitch);
+            ((EntityPlayerMP)entity).connection.setPlayerLocation(teleportPos.getX() + 0.5D, teleportPos.getY() + 0.25D, teleportPos.getZ() + 0.5D, yaw, entity.rotationPitch);
         }
         else
         {
-            entity.setLocationAndAngles(teleportPos.getX() + 0.5D, teleportPos.getY(), teleportPos.getZ() + 0.5D, yaw, entity.rotationPitch);
+            entity.setLocationAndAngles(teleportPos.getX() + 0.5D, teleportPos.getY() + 0.25D, teleportPos.getZ() + 0.5D, yaw, entity.rotationPitch);
         }
     }
 }

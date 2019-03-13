@@ -1,7 +1,5 @@
 package org.bensam.experimental.block.teleportbeacon;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -9,22 +7,38 @@ import javax.annotation.Nullable;
 import org.bensam.experimental.ExperimentalMod;
 import org.bensam.experimental.ModHelper;
 import org.bensam.experimental.block.ModBlocks;
+import org.bensam.experimental.client.particle.ParticleTeleportationMagic;
+import org.bensam.experimental.item.ModItems;
 import org.bensam.experimental.network.PacketRequestUpdateTeleportBeacon;
 
-import net.minecraft.init.Items;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IWorldNameable;
 
-public class TileEntityTeleportBeacon extends TileEntity implements IWorldNameable
+public class TileEntityTeleportBeacon extends TileEntity implements IWorldNameable, ITickable
 {
-    public static final ItemStack TOPPER_ITEM_WHEN_ACTIVE = new ItemStack(Items.ENDER_EYE);
-    public boolean isActive = false;
+    public static final ItemStack TOPPER_ITEM_WHEN_ACTIVE = new ItemStack(ModItems.enderEyeTranslucent);
+    public static final long PARTICLE_APPEARANCE_DELAY = 40; // how many ticks after becoming active until particles should start spawning
+    
+    // particle path characteristics
+    public static final double PARTICLE_ANGULAR_VELOCITY = Math.PI / 10.0D; // (PI/10 radians/tick) x (20 ticks/sec) = 1 complete circle / second for each particle
+    public static final double PARTICLE_HORIZONTAL_RADIUS = 0.4D;
+    public static final double PARTICLE_VERTICAL_POSITIONS = 40.0D; // number of particle positions vertically, where particle moves vertically 1 position / tick
+    public static final double PARTICLE_HEIGHT_TO_BEGIN_SCALING = 32.0D;
+    public static final double PARTICLE_VERTICAL_POSITIONS_PER_BLOCK = 16.0D; // = 1/16 of a block per vertical position of a particle
 
+    // client-only data
+    public boolean isActive = false;
+    public long particleSpawnStartTime = 0; // world time to begin spawning particles (for an active beacon)
+    protected double particleSpawnAngle = 0.0D; // particle spawn angle
+
+    // server-only data
     private String beaconName = "";
     private UUID uniqueID = new UUID(0, 0);
 
@@ -33,40 +47,66 @@ public class TileEntityTeleportBeacon extends TileEntity implements IWorldNameab
     {
         if (world.isRemote) // running on client
         {
+            // Set an initial, random spawn angle for particles.
+            particleSpawnAngle = ModHelper.random.nextDouble() * Math.PI;
+            
+            // Request an update from the server on the "active" status for this TE for the current player (i.e. client).
+            // If TE is active, response logic will also set the particleSpawnStartTime.
             ExperimentalMod.network.sendToServer(new PacketRequestUpdateTeleportBeacon(this));
+        }
+    }
+
+    @Override
+    public void update()
+    {
+        if (world.isRemote && isActive)
+        {
+            long totalWorldTime = world.getTotalWorldTime();
+
+            if (totalWorldTime >= particleSpawnStartTime)
+            {
+                // Spawn active beacon particles.
+                particleSpawnAngle += PARTICLE_ANGULAR_VELOCITY;
+                double blockCenterX = (double) pos.getX() + 0.5D;
+                double blockY = (double) pos.getY() + 0.125D;
+                double blockCenterZ = (double) pos.getZ() + 0.5D;
+                
+                // Particle group 1 = Particle 1 & Particle 2. They share the same height, but appear opposite each other.
+                double group1Height = (double) (totalWorldTime % PARTICLE_VERTICAL_POSITIONS);
+                float group1ScaleModifier = (group1Height <= PARTICLE_HEIGHT_TO_BEGIN_SCALING) ? 1.0F : (100.0F - (8.0F * ((float) (group1Height - PARTICLE_HEIGHT_TO_BEGIN_SCALING)))) / 100.0F; 
+                double yCoordGroup1 = blockY + (group1Height / PARTICLE_VERTICAL_POSITIONS_PER_BLOCK);
+                
+                // Particle group 2 = Particle 3 & Particle 4. They also share the same height and appear opposite each other.
+                double group2Height = (double) ((totalWorldTime + 16) % PARTICLE_VERTICAL_POSITIONS);
+                float group2ScaleModifier = (group2Height <= PARTICLE_HEIGHT_TO_BEGIN_SCALING) ? 1.0F : (100.0F - (8.0F * ((float) (group2Height - PARTICLE_HEIGHT_TO_BEGIN_SCALING)))) / 100.0F; 
+                double yCoordGroup2 = blockY + (group2Height / PARTICLE_VERTICAL_POSITIONS_PER_BLOCK);
+
+                // Particle 1:
+                double xCoord = blockCenterX + (Math.cos(particleSpawnAngle) * PARTICLE_HORIZONTAL_RADIUS);
+                double zCoord = blockCenterZ + (Math.sin(particleSpawnAngle) * PARTICLE_HORIZONTAL_RADIUS);
+                Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleTeleportationMagic(world, xCoord, yCoordGroup1, zCoord, group1ScaleModifier));
+                
+                // Particle 3:
+                Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleTeleportationMagic(world, xCoord, yCoordGroup2, zCoord, group2ScaleModifier));
+                
+                // Particle 2:
+                double particle2SpawnAngle = particleSpawnAngle + Math.PI;
+                xCoord = blockCenterX + (Math.cos(particle2SpawnAngle) * PARTICLE_HORIZONTAL_RADIUS);
+                zCoord = blockCenterZ + (Math.sin(particle2SpawnAngle) * PARTICLE_HORIZONTAL_RADIUS);
+                Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleTeleportationMagic(world, xCoord, yCoordGroup1, zCoord, group1ScaleModifier));
+                
+                // Particle 4:
+                Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleTeleportationMagic(world, xCoord, yCoordGroup2, zCoord, group2ScaleModifier));
+            }
         }
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
-        ExperimentalMod.logger.info("TileEntityTeleportBeacon.readFromNBT called");
-
-        if (compound.hasKey("beaconName"))
-        {
-            beaconName = compound.getString("beaconName");
-            if (beaconName == null || beaconName.isEmpty())
-            {
-                ExperimentalMod.logger.info("TileEntityTeleportBeacon.readFromNBT: beaconName null or empty");
-            }
-            else
-            {
-                ExperimentalMod.logger.info("TileEntityTeleportBeacon.readFromNBT: beaconName = " + beaconName);
-            }
-        }
-
-        if (compound.hasUniqueId("uniqueID"))
-        {
-            uniqueID = compound.getUniqueId("uniqueID");
-            if (uniqueID == null || uniqueID.equals(new UUID(0, 0)))
-            {
-                ExperimentalMod.logger.info("TileEntityTeleportBeacon.readFromNBT: uniqueID empty");
-            }
-            else
-            {
-                ExperimentalMod.logger.info("TileEntityTeleportBeacon.readFromNBT: uniqueID = " + uniqueID);
-            }
-        }
+        beaconName = compound.getString("beaconName");
+        uniqueID = compound.getUniqueId("uniqueID");
+        ExperimentalMod.logger.info("TileEntityTeleportBeacon.readFromNBT: beaconName = {}, uniqueID = {}", beaconName, uniqueID);
 
         super.readFromNBT(compound);
     }
@@ -74,25 +114,33 @@ public class TileEntityTeleportBeacon extends TileEntity implements IWorldNameab
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
-        ExperimentalMod.logger.info("TileEntityTeleportBeacon.writeToNBT called");
-
+        boolean isDataValid = true;
+        
         if (beaconName.isEmpty())
         {
-            ExperimentalMod.logger.info("TileEntityTeleportBeacon.writeToNBT: beaconName empty");
+            isDataValid = false;
         }
         else
         {
-            ExperimentalMod.logger.info("Writing NBT for " + beaconName);
             compound.setString("beaconName", beaconName);
         }
 
         if (uniqueID.equals(new UUID(0, 0)))
         {
-            ExperimentalMod.logger.info("TileEntityTeleportBeacon.writeToNBT: uniqueID empty");
+            isDataValid = false;
         }
         else
         {
             compound.setUniqueId("uniqueID", uniqueID);
+        }
+        
+        if (isDataValid)
+        {
+            ExperimentalMod.logger.info("TileEntityTeleportBeacon.writeToNBT: beaconName = {}, uniqueID = {}, {}", beaconName, uniqueID, pos);
+        }
+        else
+        {
+            ExperimentalMod.logger.warn("TileEntityTeleportBeacon.writeToNBT: TE contains invalid data... beaconName = {}, uniqueID = {}, {}", beaconName, uniqueID, pos);
         }
 
         return super.writeToNBT(compound);
@@ -115,13 +163,13 @@ public class TileEntityTeleportBeacon extends TileEntity implements IWorldNameab
     }
 
     /*
-     * Pass in null or empty string to set to default name format, based on time and date.
+     * Pass in null or empty string to set a random name, of the format [A-Z][0-99].
      */
     public void setBeaconName(@Nullable String name)
     {
         if (name == null || name.isEmpty())
         {
-            beaconName = "Beacon " + ModHelper.getRandomLetter() + (new SimpleDateFormat("ss").format(new Date()));
+            beaconName = "Beacon " + ModHelper.getRandomLetter() + String.format("%02d", ModHelper.random.nextInt(100));
         }
         else
         {

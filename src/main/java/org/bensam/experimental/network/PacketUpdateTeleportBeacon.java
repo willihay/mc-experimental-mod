@@ -1,9 +1,11 @@
 package org.bensam.experimental.network;
 
+import org.bensam.experimental.block.teleportbeacon.BlockTeleportBeacon;
 import org.bensam.experimental.block.teleportbeacon.TileEntityTeleportBeacon;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -39,10 +41,24 @@ public class PacketUpdateTeleportBeacon implements IMessage
             // Update the teleport beacon in the client, scheduling this execution on the main thread instead of the Netty networking thread.
             Minecraft.getMinecraft().addScheduledTask(() ->
             {
-                TileEntity te = Minecraft.getMinecraft().world.getTileEntity(message.pos);
+                WorldClient world = Minecraft.getMinecraft().world;
+                TileEntity te = world.getTileEntity(message.pos);
                 if (te instanceof TileEntityTeleportBeacon)
                 {
-                    ((TileEntityTeleportBeacon) te).isActive = message.isActive;
+                    TileEntityTeleportBeacon teTeleportBeacon = (TileEntityTeleportBeacon) te;
+                    
+                    // Set block state on the client so that lighting is updated.
+                    world.setBlockState(message.pos, world.getBlockState(message.pos).withProperty(BlockTeleportBeacon.IS_ACTIVE, message.isActive), 0);
+
+                    boolean wasActive = teTeleportBeacon.isActive;
+                    teTeleportBeacon.isActive = message.isActive;
+                    if (message.isActive && !wasActive)
+                    {
+                        ((TileEntityTeleportBeacon) te).particleSpawnStartTime = world.getTotalWorldTime() + TileEntityTeleportBeacon.PARTICLE_APPEARANCE_DELAY;
+                    }
+
+                    // TODO: do we need this render update call now that we have a setBlockState call?
+                    //world.markBlockRangeForRenderUpdate(te.getPos(), te.getPos());
                 }
             });
             

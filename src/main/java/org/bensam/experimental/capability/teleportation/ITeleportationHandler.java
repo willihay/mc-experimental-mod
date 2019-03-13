@@ -8,12 +8,18 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 
 /*
  * Implemented by TeleportationHandler
  */
 public interface ITeleportationHandler
 {
+    /*
+     * Returns the container index for the current active destination.
+     */
+    int getActiveDestinationIndex();
+
     /*
      * Returns the number of teleport destinations in this container.
      */
@@ -30,9 +36,19 @@ public interface ITeleportationHandler
     TeleportDestination getActiveDestination();
     
     /*
+     * Changes the current active TeleportDestination to the previous one in the list and returns it.
+     */
+    TeleportDestination getPreviousActiveDestination();
+    
+    /*
      * Advances the current active TeleportDestination to the next one in the list and returns it.
      */
     TeleportDestination getNextActiveDestination();
+    
+    /*
+     * Returns the TeleportDestination with the UUID specified (or null if it cannot be found).
+     */
+    TeleportDestination getDestinationFromUUID(UUID uuid);
     
     /*
      * Returns the TeleportDestination at position 'index' in the container (zero-based).
@@ -46,10 +62,22 @@ public interface ITeleportationHandler
     public String getShortFormattedName(EntityPlayer player, TeleportDestination destination);
     
     /*
+     * Returns the short version of the formatted destination, including friendly name and formatted dimension name. 
+     * Includes color formatting to indicate validation status of TeleportDestination and a default format for the rest of the text.
+     */
+    public String getShortFormattedName(EntityPlayer player, TeleportDestination destination, TextFormatting defaultFormat);
+    
+    /*
      * Returns the long version of the formatted destination, including friendly name, formatted dimension name, position, and facing orientation. 
      * Includes color formatting to indicate validation status of TeleportDestination.
      */
     public String getLongFormattedName(EntityPlayer player, TeleportDestination destination);
+    
+    /*
+     * Returns the long version of the formatted destination, including friendly name, formatted dimension name, position, and facing orientation. 
+     * Includes color formatting to indicate validation status of TeleportDestination and a default format for the rest of the text.
+     */
+    public String getLongFormattedName(EntityPlayer player, TeleportDestination destination, TextFormatting defaultFormat);
     
     /*
      * Adds a TeleportDestination to the collection.
@@ -82,7 +110,7 @@ public interface ITeleportationHandler
      * Mark an existing TeleportDestination in the list to indicate it has been re-placed in the world.
      * Null values can be passed to indicate no change from previous values.
      */
-    void setDestinationAsPlaced(UUID uuid, @Nullable String friendlyName, int dimension, @Nullable BlockPos newPos, @Nullable EnumFacing preferredTeleportFace);
+    void setDestinationAsPlaced(UUID uuid, @Nullable String friendlyName, int dimension, @Nullable BlockPos newPos);
     
     /*
      * Mark an existing TeleportDestination in the list to indicate it has been removed (but don't delete from list yet).

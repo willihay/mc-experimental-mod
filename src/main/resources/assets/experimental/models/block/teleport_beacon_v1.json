@@ -1,0 +1,52 @@
+{
+    "__comment": "Model generated using MrCrayfish's Model Creator (https://mrcrayfish.com/tools?id=mc)",
+    "textures": {
+        "particle": "minecraft:blocks/obsidian",
+        "pedestal_south": "minecraft:blocks/obsidian",
+        "pedestal_north": "minecraft:blocks/obsidian",
+        "pedestal_west": "minecraft:blocks/obsidian",
+        "pedestal_east": "minecraft:blocks/obsidian",
+        "pedestal_up": "minecraft:blocks/obsidian",
+        "stonebrick": "minecraft:blocks/stonebrick",
+        "lapis_block": "minecraft:blocks/lapis_block"
+    },
+    "elements": [
+        {
+            "name": "pedestal_base",
+            "from": [ 1, 0, 1 ], 
+            "to": [ 15, 7, 15 ], 
+            "faces": {
+                "north": { "texture": "#stonebrick", "uv": [ 0, 4, 14, 11 ] },
+                "east": { "texture": "#stonebrick", "uv": [ 0, 4, 14, 11 ] },
+                "south": { "texture": "#stonebrick", "uv": [ 0, 4, 14, 11 ] },
+                "west": { "texture": "#stonebrick", "uv": [ 0, 4, 14, 11 ] },
+                "up": { "texture": "#stonebrick", "uv": [ 0, 0, 14, 14 ] },
+                "down": { "texture": "#stonebrick", "uv": [ 0, 0, 14, 14 ], "cullface": "down" }
+            }
+        },
+        {
+            "name": "pedestal",
+            "from": [ 3, 7, 3 ], 
+            "to": [ 13, 14, 13 ], 
+            "faces": {
+                "north": { "texture": "#pedestal_north", "uv": [ 1, 1, 11, 8 ] },
+                "east": { "texture": "#pedestal_east", "uv": [ 1, 1, 11, 8 ] },
+                "south": { "texture": "#pedestal_south", "uv": [ 1, 1, 11, 8 ] },
+                "west": { "texture": "#pedestal_west", "uv": [ 1, 1, 11, 8 ] },
+                "up": { "texture": "#pedestal_up", "uv": [ 5, 1, 15, 11 ] }
+            }
+        },
+        {
+            "name": "pedestal_top",
+            "from": [ 5, 14, 5 ], 
+            "to": [ 11, 15, 11 ], 
+            "faces": {
+                "north": { "texture": "#lapis_block", "uv": [ 0, 0, 6, 1 ] },
+                "east": { "texture": "#lapis_block", "uv": [ 0, 0, 6, 1 ] },
+                "south": { "texture": "#lapis_block", "uv": [ 0, 0, 6, 1 ] },
+                "west": { "texture": "#lapis_block", "uv": [ 0, 0, 6, 1 ] },
+                "up": { "texture": "#lapis_block", "uv": [ 0, 0, 6, 6 ] }
+            }
+        }
+    ]
+}

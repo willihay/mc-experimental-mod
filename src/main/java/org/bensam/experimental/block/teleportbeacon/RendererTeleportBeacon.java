@@ -9,6 +9,8 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.ForgeHooksClient;
 
 public class RendererTeleportBeacon extends TileEntitySpecialRenderer<TileEntityTeleportBeacon>
@@ -30,7 +32,7 @@ public class RendererTeleportBeacon extends TileEntitySpecialRenderer<TileEntity
         GlStateManager.pushMatrix();
 
         // Item appears on top of beacon.
-        GlStateManager.translate(x + 0.5, y + 1, z + 0.5);
+        GlStateManager.translate(x + 0.5D, y + 1.0D, z + 0.5D);
 
         // Item should smoothly rotate around the Y-axis.
         GlStateManager.rotate((te.getWorld().getTotalWorldTime() + partialTicks) * 4, 0, 1, 0);

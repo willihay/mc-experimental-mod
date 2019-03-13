@@ -1,9 +1,9 @@
 {
 	"type": "minecraft:crafting_shaped",
 	"pattern": [
-		" E ",
-		"OLO",
-		"SSS"
+		"LOL",
+		"SES",
+		"LOL"
 	],
 	"key": {
 		"E": {
@@ -13,7 +13,8 @@
 			"item": "minecraft:obsidian"
 		},
 		"L": {
-			"item": "minecraft:lapis_block"
+			"item": "minecraft:dye",
+			"data": 4
 		},
 		"S": [
 		  {

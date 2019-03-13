@@ -3,6 +3,7 @@ package org.bensam.experimental;
 import org.apache.logging.log4j.Logger;
 import org.bensam.experimental.block.ModBlocks;
 import org.bensam.experimental.capability.teleportation.CommandTeleportation;
+import org.bensam.experimental.capability.teleportation.ITeleportationHandler;
 import org.bensam.experimental.capability.teleportation.TeleportationHandlerCapabilityProvider;
 import org.bensam.experimental.client.CreativeTab;
 import org.bensam.experimental.entity.EntityTeleportationSplashPotion;
@@ -17,6 +18,8 @@ import org.bensam.experimental.potion.ModPotions;
 import org.bensam.experimental.proxy.CommonProxy;
 import org.bensam.experimental.recipe.ModRecipes;
 import org.bensam.experimental.world.ModWorldGenerator;
+
+import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
@@ -35,6 +38,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootTableList;
@@ -78,6 +82,7 @@ public class ExperimentalMod
     public static final Item.ToolMaterial copperToolMaterial = EnumHelper.addToolMaterial("COPPER", 2, 500, 6.0f, 2.0f, 14);
     public static final ItemArmor.ArmorMaterial copperArmorMaterial = EnumHelper.addArmorMaterial("COPPER",
             MODID + ":copper", 15, new int[] { 2, 5, 6, 2 }, 9, SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0f);
+    //public static final EnumParticleTypes TELEPORTATION_MAGIC_PARTICLE = EnumHelper.addEnum(EnumParticleTypes.class, "TELEPORTATION_MAGIC", paramTypes, paramValues)
 
     public static CreativeTab creativeTab = new CreativeTab();
 
@@ -129,6 +134,20 @@ public class ExperimentalMod
 
         proxy.preInit(event);
 
+        // TODO: remove...just a test
+//        Class<ITeleportationHandler> expected = ITeleportationHandler.class;
+//        String clsName = "org.bensam.experimental.capability.teleportation.TeleportationHandler";
+//        try
+//        {
+//            Class<?> cls = Class.forName(clsName);
+//            if (!expected.isAssignableFrom(cls))
+//                throw new JsonSyntaxException("Class '" + clsName + "' is not an " + expected.getSimpleName());
+//        }
+//        catch (ClassNotFoundException e)
+//        {
+//            throw new JsonSyntaxException("Could not find " + expected.getSimpleName() + ": " + clsName, e);
+//        }
+        
         // Register the teleportation capability, to make it available for injection.
         TeleportationHandlerCapabilityProvider.registerCapability();
         

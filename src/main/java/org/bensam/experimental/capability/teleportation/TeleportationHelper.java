@@ -8,7 +8,9 @@ import javax.annotation.Nullable;
 import org.bensam.experimental.ExperimentalMod;
 import org.bensam.experimental.ModHelper;
 import org.bensam.experimental.block.ModBlocks;
+import org.bensam.experimental.block.teleportbeacon.BlockTeleportBeacon;
 import org.bensam.experimental.block.teleportbeacon.TileEntityTeleportBeacon;
+import org.bensam.experimental.network.PacketUpdateTeleportBeacon;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
@@ -22,6 +24,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketMoveVehicle;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
@@ -117,7 +120,23 @@ public class TeleportationHelper
         return null;
     }
 
-    public static Entity teleportOther(Entity entityToTeleport, TileEntity tileEntityInitiatingTeleport, boolean rotateToFaceIfBeacon)
+    public static void remountRider(Entity rider, Entity entityRidden)
+    {
+        if (!rider.isRiding() 
+                && rider.dimension == entityRidden.dimension 
+                && (rider.getPosition().distanceSqToCenter(entityRidden.posX, entityRidden.posY, entityRidden.posZ) < 4.0D))
+        {
+            rider.startRiding(entityRidden, true);
+            if (rider instanceof EntityPlayerMP)
+            {
+                // Send an explicit vehicle move packet to update ridden entity with latest position info.
+                // (If not done, then the normal move packet can override the teleport in some conditions (e.g. when they're close to the teleport destination) and send both player and vehicle back to their pre-teleport position!) 
+                ((EntityPlayerMP) rider).connection.netManager.sendPacket(new SPacketMoveVehicle(entityRidden));
+            }
+        }
+    }
+
+    public static Entity teleportOther(Entity entityToTeleport, TileEntity tileEntityInitiatingTeleport)
     {
         ITeleportationHandler teleportationHandler = tileEntityInitiatingTeleport.getCapability(TeleportationHandlerCapabilityProvider.TELEPORTATION_CAPABILITY, null);
         if (teleportationHandler != null)
@@ -127,7 +146,7 @@ public class TeleportationHelper
             {
                 if (teleportationHandler.validateDestination((Entity) null, activeTeleportDestination))
                 {
-                    return teleport(entityToTeleport, activeTeleportDestination, rotateToFaceIfBeacon);
+                    return teleport(entityToTeleport, activeTeleportDestination);
                 }
             }
         }
@@ -135,7 +154,7 @@ public class TeleportationHelper
         return entityToTeleport;
     }
     
-    public static Entity teleportOther(Entity entityToTeleport, Entity entityInitiatingTeleport, boolean rotateToFaceIfBeacon)
+    public static Entity teleportOther(Entity entityToTeleport, Entity entityInitiatingTeleport)
     {
         ITeleportationHandler teleportationHandler = entityInitiatingTeleport.getCapability(TeleportationHandlerCapabilityProvider.TELEPORTATION_CAPABILITY, null);
         if (teleportationHandler != null)
@@ -145,7 +164,7 @@ public class TeleportationHelper
             {
                 if (teleportationHandler.validateDestination(entityInitiatingTeleport, activeTeleportDestination))
                 {
-                    return teleport(entityToTeleport, activeTeleportDestination, rotateToFaceIfBeacon);
+                    return teleport(entityToTeleport, activeTeleportDestination);
                 }
             }
         }
@@ -153,7 +172,7 @@ public class TeleportationHelper
         return entityToTeleport;
     }
     
-    public static Entity teleport(Entity entityToTeleport, TeleportDestination destination, boolean rotateToFaceIfBeacon)
+    public static Entity teleport(Entity entityToTeleport, TeleportDestination destination)
     {
         World currentWorld = entityToTeleport.world;
         int teleportDimension = destination.dimension;
@@ -164,14 +183,12 @@ public class TeleportationHelper
         switch (destination.destinationType)
         {
         case SPAWNBED:
-            // TODO: Instead of doing safe checks here, should we just run validate on the destination here? or assume that validation has been run?
             safePos = findSafeTeleportPosNearBed(teleportDimension, destination.position);
             break;
         case BEACON:
-            safePos = findSafeTeleportPosAroundDestination(teleportWorld, destination.position, destination.preferredTeleportFace);
-            if (rotateToFaceIfBeacon)
+            if (!teleportWorld.getBlockState(destination.position.up()).getMaterial().isSolid())
             {
-                rotationYaw = ModHelper.getRotationFromFacing(destination.preferredTeleportFace.getOpposite());
+                safePos = destination.position;
             }
             break;
         case BLOCKPOS:
@@ -234,8 +251,12 @@ public class TeleportationHelper
         else
         {
             // Teleport entity to destination.
+
+            // Try attemptTeleport first because it has some extra, interesting render effects.
+            // Note that the Y-coordinate is specified one block higher because of how the attemptTeleport function
+            //   starts looking for safe teleport positions one block BELOW the specified Y-coordinate.
             if (entityToTeleport instanceof EntityLivingBase && ((EntityLivingBase) entityToTeleport)
-                    .attemptTeleport(teleportPos.getX() + 0.5D, teleportPos.getY(), teleportPos.getZ() + 0.5D))
+                    .attemptTeleport(teleportPos.getX() + 0.5D, teleportPos.up().getY() + 0.25D, teleportPos.getZ() + 0.5D))
             {
                 ExperimentalMod.logger.info("attemptTeleport succeeded");
             }
@@ -243,11 +264,22 @@ public class TeleportationHelper
             {
                 // If we can't do it the "pretty way", just force it! Hopefully they survive teh magiks. :P
                 ExperimentalMod.logger.info("Calling setPositionAndUpdate...");
-                entityToTeleport.setPositionAndUpdate(teleportPos.getX() + 0.5D, teleportPos.getY(),
+                entityToTeleport.setPositionAndUpdate(teleportPos.getX() + 0.5D, teleportPos.getY() + 0.25D,
                         teleportPos.getZ() + 0.5D);
             }
         }
 
+        // TODO: This doesn't seem to correct the lighting when traveling to the nether...
+//        if (entityToTeleport instanceof EntityPlayerMP)
+//        {
+//            TileEntity te = teleportWorld.getTileEntity(teleportPos);
+//            if (te instanceof TileEntityTeleportBeacon)
+//            {
+//                // Send block update to correct lighting in some scenarios (e.g. teleporting across dimensions).
+//                ExperimentalMod.network.sendTo(new PacketUpdateTeleportBeacon(te.getPos(), true), (EntityPlayerMP) entityToTeleport);
+//            }
+//        }
+        
         // Play teleport sound at the starting position and final position of the teleporting entity.
         currentWorld.playSound((EntityPlayer) null, preTeleportPosition, SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT,
                 SoundCategory.PLAYERS, 1.0F, 1.0F);

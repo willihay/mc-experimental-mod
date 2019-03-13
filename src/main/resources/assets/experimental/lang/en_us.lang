@@ -4,7 +4,7 @@
 itemGroup.experimental=Experimental Mod
 
 # Commands
-commands.td.usage=/td <list | delete | next> [destination#]
+commands.td.usage=/td <prev | next | list | delete> [count/destination#]
 commands.td.destination.missing=Must include teleport destination number
 commands.td.destination.none=Player has no known teleport destinations
 commands.td.destination.notFound=%s is an invalid teleport destination number in your network
@@ -46,10 +46,6 @@ entity.health_zombie.name=Health Zombie
 
 # Potions
 effect.teleportation_potion=Teleportation
-potion.effect.teleportation_potion=Old Potion of Teleportation
-splash_potion.effect.teleportation_potion=Old Splash Potion of Teleportation
-lingering_potion.effect.teleportation_potion=Old Lingering Potion of Teleportation
-tipped_arrow.effect.teleportation_potion=Arrow of Teleportation
 
 # Miscellaneous Messages
 message.death_coordinates=You died at %s

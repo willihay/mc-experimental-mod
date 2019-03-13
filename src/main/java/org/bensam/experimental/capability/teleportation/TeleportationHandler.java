@@ -16,13 +16,11 @@ import org.bensam.experimental.capability.teleportation.TeleportDestination.Dest
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -38,6 +36,12 @@ public class TeleportationHandler implements ITeleportationHandler, INBTSerializ
     
     public TeleportationHandler()
     {
+    }
+
+    @Override
+    public int getActiveDestinationIndex()
+    {
+        return activeDestinationIndex;
     }
 
     @Override
@@ -62,6 +66,18 @@ public class TeleportationHandler implements ITeleportationHandler, INBTSerializ
     }
 
     @Override
+    public TeleportDestination getPreviousActiveDestination()
+    {
+        if (destinations.size() > 0)
+        {
+            activeDestinationIndex = (activeDestinationIndex + destinations.size() - 1) % destinations.size();
+            return getActiveDestination();
+        }
+        else
+            return null;
+    }
+
+    @Override
     public TeleportDestination getNextActiveDestination()
     {
         if (destinations.size() > 0)
@@ -71,6 +87,18 @@ public class TeleportationHandler implements ITeleportationHandler, INBTSerializ
         }
         else
             return null;
+    }
+
+    @Override
+    public TeleportDestination getDestinationFromUUID(UUID uuid)
+    {
+        for (TeleportDestination destination : destinations)
+        {
+            if (destination.getUUID().equals(uuid))
+                return destination;
+        }
+
+        return null;
     }
 
     @Override
@@ -85,18 +113,11 @@ public class TeleportationHandler implements ITeleportationHandler, INBTSerializ
     @Override
     public String getShortFormattedName(@Nullable EntityPlayer player, TeleportDestination destination)
     {
-        TextFormatting beaconNameFormat = TextFormatting.RESET;
-        if (player != null)
-        {
-            boolean isValid = validateDestination(player, destination);
-            beaconNameFormat = isValid ? TextFormatting.DARK_GREEN : TextFormatting.DARK_GRAY;
-        }
-        
-        return beaconNameFormat + destination.friendlyName + TextFormatting.RESET + " (" + ModHelper.getDimensionName(destination.dimension) + ")";
+        return getShortFormattedName(player, destination, TextFormatting.RESET);
     }
     
     @Override
-    public String getLongFormattedName(@Nullable EntityPlayer player, TeleportDestination destination)
+    public String getShortFormattedName(@Nullable EntityPlayer player, TeleportDestination destination, TextFormatting defaultFormat)
     {
         TextFormatting beaconNameFormat = TextFormatting.RESET;
         if (player != null)
@@ -105,17 +126,35 @@ public class TeleportationHandler implements ITeleportationHandler, INBTSerializ
             beaconNameFormat = isValid ? TextFormatting.DARK_GREEN : TextFormatting.DARK_GRAY;
         }
         
-        return getLongFormattedName(beaconNameFormat, destination);
+        return beaconNameFormat + destination.friendlyName + defaultFormat + " (" + ModHelper.getDimensionName(destination.dimension) + ")";
     }
 
-    public static String getLongFormattedName(TextFormatting beaconNameFormat, TeleportDestination destination)
+    @Override
+    public String getLongFormattedName(@Nullable EntityPlayer player, TeleportDestination destination)
     {
-        return beaconNameFormat + destination.friendlyName + TextFormatting.RESET 
+        return getLongFormattedName(player, destination, TextFormatting.RESET);
+    }
+    
+    @Override
+    public String getLongFormattedName(@Nullable EntityPlayer player, TeleportDestination destination, TextFormatting defaultFormat)
+    {
+        TextFormatting beaconNameFormat = TextFormatting.RESET;
+        if (player != null)
+        {
+            boolean isValid = validateDestination(player, destination);
+            beaconNameFormat = isValid ? TextFormatting.DARK_GREEN : TextFormatting.DARK_GRAY;
+        }
+        
+        return getLongFormattedName(destination, beaconNameFormat, defaultFormat);
+    }
+
+    public static String getLongFormattedName(TeleportDestination destination, TextFormatting beaconNameFormat, TextFormatting defaultFormat)
+    {
+        return beaconNameFormat + destination.friendlyName + defaultFormat 
                 + " at {" + destination.position.getX() + ", " 
                 + destination.position.getY() + ", " 
                 + destination.position.getZ() + "} in " 
-                + ModHelper.getDimensionName(destination.dimension) 
-                + " facing " + destination.preferredTeleportFace;
+                + ModHelper.getDimensionName(destination.dimension);
     }
 
     @Override
@@ -207,8 +246,7 @@ public class TeleportationHandler implements ITeleportationHandler, INBTSerializ
     }
 
     @Override
-    public void setDestinationAsPlaced(UUID uuid, @Nullable String newName, int newDimension, 
-                                       @Nullable BlockPos newPos, @Nullable EnumFacing newPreferredTeleportFace)
+    public void setDestinationAsPlaced(UUID uuid, @Nullable String newName, int newDimension, @Nullable BlockPos newPos)
     {
         for (TeleportDestination destination : destinations)
         {
@@ -223,10 +261,6 @@ public class TeleportationHandler implements ITeleportationHandler, INBTSerializ
                 if (newPos != null)
                 {
                     destination.position = newPos;
-                }
-                if (newPreferredTeleportFace != null)
-                {
-                    destination.preferredTeleportFace = newPreferredTeleportFace;
                 }
                 
                 break;

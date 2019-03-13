@@ -8,8 +8,10 @@ import org.bensam.experimental.block.pedestal.RendererPedestal;
 import org.bensam.experimental.block.pedestal.TileEntityPedestal;
 import org.bensam.experimental.block.teleportbeacon.RendererTeleportBeacon;
 import org.bensam.experimental.block.teleportbeacon.TileEntityTeleportBeacon;
+import org.bensam.experimental.client.particle.ParticleTeleportationMagic;
 import org.bensam.experimental.entity.ModEntities;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
@@ -36,6 +38,7 @@ public class ClientProxy extends CommonProxy
     {
         super.init(event);
         ExperimentalMod.logger.info("** ClientProxy initialization event **");
+        //Minecraft.getMinecraft().effectRenderer.registerParticle(ExperimentalMod.TELEPORTATION_MAGIC_PARTICLE.getParticleID(), new ParticleTeleportationMagic.Factory());
     }
 
     @Override

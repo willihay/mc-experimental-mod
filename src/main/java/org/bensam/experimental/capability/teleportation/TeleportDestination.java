@@ -9,7 +9,6 @@ import org.bensam.experimental.ExperimentalMod;
 import com.google.common.base.MoreObjects;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -46,8 +45,15 @@ public class TeleportDestination implements INBTSerializable<NBTTagCompound>
     public int dimension;
     public String friendlyName;
     public BlockPos position;
-    public EnumFacing preferredTeleportFace;
     private UUID uuid;
+
+    /** TODO: this field is planned for future use
+     *  FLAG BIT MEANINGS:
+     *  1: INVALID  - last validation check returned 'invalid'
+     *  2: MOVED    - last validation check updated the position of this destination with a new, valid position
+     *  4: RENAMED  - last validation check updated the name of this destination with a new name 
+     */
+    private int flags;
     
     public TeleportDestination(NBTTagCompound nbt)
     {
@@ -56,17 +62,17 @@ public class TeleportDestination implements INBTSerializable<NBTTagCompound>
     
     public TeleportDestination(@Nonnull String friendlyName, DestinationType destinationType, int dimension, @Nonnull BlockPos position)
     {
-        this(UUID.randomUUID(), friendlyName, destinationType, dimension, position, EnumFacing.UP);
+        this(UUID.randomUUID(), friendlyName, destinationType, dimension, position);
     }
     
-    public TeleportDestination(@Nonnull UUID uuid, @Nonnull String friendlyName, DestinationType destinationType, int dimension, @Nonnull BlockPos position, EnumFacing preferredTeleportFace)
+    public TeleportDestination(@Nonnull UUID uuid, @Nonnull String friendlyName, DestinationType destinationType, int dimension, @Nonnull BlockPos position)
     {
         this.uuid = uuid;
         this.friendlyName = friendlyName;
         this.destinationType = destinationType;
         this.dimension = dimension;
         this.position = position;
-        this.preferredTeleportFace = preferredTeleportFace;
+        this.flags = 0;
         
         if (this.uuid == null)
         {
@@ -106,7 +112,7 @@ public class TeleportDestination implements INBTSerializable<NBTTagCompound>
                 .add("Name", friendlyName)
                 .add("Dimension", dimension)
                 .add("Position", position)
-                .add("Facing", preferredTeleportFace)
+                .add("Flags", Integer.toBinaryString(flags))
                 .toString();
     }
 
@@ -124,8 +130,8 @@ public class TeleportDestination implements INBTSerializable<NBTTagCompound>
         nbt.setInteger("Dimension", dimension);
         nbt.setString("FriendlyName", friendlyName);
         nbt.setLong("Position", position.toLong());
-        nbt.setInteger("TeleportFace", preferredTeleportFace.getIndex());
         nbt.setUniqueId("UUID", uuid);
+        nbt.setInteger("Flags", flags);
         
         return nbt;
     }
@@ -138,7 +144,7 @@ public class TeleportDestination implements INBTSerializable<NBTTagCompound>
         dimension = nbt.getInteger("Dimension");
         friendlyName = nbt.getString("FriendlyName");
         position = BlockPos.fromLong(nbt.getLong("Position"));
-        preferredTeleportFace = EnumFacing.byIndex(nbt.getInteger("TeleportFace"));
         uuid = nbt.getUniqueId("UUID");
+        flags = nbt.getInteger("Flags");
     }
 }

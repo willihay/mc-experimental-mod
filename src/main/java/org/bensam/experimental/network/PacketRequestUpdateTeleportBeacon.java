@@ -1,8 +1,8 @@
 package org.bensam.experimental.network;
 
-import org.bensam.experimental.ExperimentalMod;
 import org.bensam.experimental.block.teleportbeacon.TileEntityTeleportBeacon;
 import org.bensam.experimental.capability.teleportation.ITeleportationHandler;
+import org.bensam.experimental.capability.teleportation.TeleportDestination;
 import org.bensam.experimental.capability.teleportation.TeleportationHandlerCapabilityProvider;
 
 import io.netty.buffer.ByteBuf;
@@ -43,7 +43,6 @@ public class PacketRequestUpdateTeleportBeacon implements IMessage
         @Override
         public PacketUpdateTeleportBeacon onMessage(PacketRequestUpdateTeleportBeacon message, MessageContext ctx)
         {
-            boolean isBeaconActive = false;
             EntityPlayer player = ctx.getServerHandler().player;
             World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dimension);
             TileEntity te = world.getTileEntity(message.pos);
@@ -54,10 +53,18 @@ public class PacketRequestUpdateTeleportBeacon implements IMessage
 
                 if (teleportationHandler != null)
                 {
-                    isBeaconActive = teleportationHandler.hasDestination(((TileEntityTeleportBeacon) te).getUniqueID());
+                    TeleportDestination destination = teleportationHandler.getDestinationFromUUID(((TileEntityTeleportBeacon) te).getUniqueID());
+                    if (destination != null)
+                    {
+                        // Return a packet indicating the beacon is active. 
+                        return new PacketUpdateTeleportBeacon(message.pos, true);
+                    }
+                    else
+                    {
+                        // Return a packet indicating the beacon is not active for this player. 
+                        return new PacketUpdateTeleportBeacon(message.pos, false);
+                    }
                 }
-
-                return new PacketUpdateTeleportBeacon(message.pos, isBeaconActive);
             }
 
             return null;

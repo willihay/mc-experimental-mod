@@ -42,8 +42,9 @@ public class ModItems
     public static ItemCornSeed cornSeed = new ItemCornSeed();
     public static ItemFoodBase creamedCornSoup = new ItemFoodBase("creamed_corn_soup", "", 6, 0.7f, false);
 
-    // Miscellaneous
+    // Teleportation Capability
     public static ItemBase enderEyeShard = new ItemBase("ender_eye_shard");
+    public static ItemBase enderEyeTranslucent = new ItemBase("ender_eye_translucent");
     public static ItemTeleportationWand teleportationWand = new ItemTeleportationWand("teleportation_wand");
     public static ItemTeleportationSplashPotion teleportationSplashPotion = new ItemTeleportationSplashPotion("teleportation_splash_potion");
     public static ItemTeleportationTippedArrow teleportationTippedArrow = new ItemTeleportationTippedArrow();
@@ -66,7 +67,8 @@ public class ModItems
                 cornBread, 
                 cornSeed, 
                 creamedCornSoup,
-                enderEyeShard, // miscellaneous
+                enderEyeShard, // teleportation capability
+                enderEyeTranslucent,
                 teleportationWand,
                 teleportationSplashPotion,
                 teleportationTippedArrow
@@ -98,8 +100,9 @@ public class ModItems
         cornSeed.registerItemModel();
         creamedCornSoup.registerItemModel();
 
-        // Miscellaneous
+        // Teleportation Capability
         enderEyeShard.registerItemModel();
+        enderEyeTranslucent.registerItemModel();
         teleportationWand.registerItemModel();
         teleportationSplashPotion.registerItemModel();
         teleportationTippedArrow.registerItemModel();

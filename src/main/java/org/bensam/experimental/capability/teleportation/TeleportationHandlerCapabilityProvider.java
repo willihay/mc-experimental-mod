@@ -4,12 +4,12 @@ import org.bensam.experimental.ExperimentalMod;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.INBTSerializable;
 
 /*
  * A class to provide the teleportation handler capability
@@ -31,6 +31,7 @@ public class TeleportationHandlerCapabilityProvider implements ICapabilitySerial
             {
                 ExperimentalMod.logger.info("TeleportationHandlerCapabilityProvider storage writeNBT called");
 
+                // TODO: have ITeleportationHandler extend INBTSerializable<NBTTagCompound> so that no cast to TeleportationHandler is necessary here, or in readNBT.
                 TeleportationHandler teleportationHandler = (TeleportationHandler)instance;
                 return teleportationHandler.serializeNBT();
             }
@@ -43,20 +44,9 @@ public class TeleportationHandlerCapabilityProvider implements ICapabilitySerial
                 if (!(instance instanceof TeleportationHandler))
                     throw new RuntimeException("Cannot deserialize instance of ITeleportationHandler to the default TeleportationHandler implementation");
                 
-                TeleportationHandler teleportationHandler = (TeleportationHandler)instance;
-                
-                if (nbt instanceof NBTTagList) // TODO: older save format - remove when all old saves are gone
+                if (nbt instanceof NBTTagCompound)
                 {
-                    NBTTagList nbtTagList = (NBTTagList)nbt;
-                    
-                    for (int i = 0; i < nbtTagList.tagCount(); ++i)
-                    {
-                        NBTTagCompound destinationTag = nbtTagList.getCompoundTagAt(i);
-                        teleportationHandler.addOrReplaceDestination(new TeleportDestination(destinationTag));
-                    }
-                }
-                else
-                {
+                    TeleportationHandler teleportationHandler = (TeleportationHandler)instance;
                     teleportationHandler.deserializeNBT((NBTTagCompound) nbt);
                 }
             }

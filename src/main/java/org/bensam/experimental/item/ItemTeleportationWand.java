@@ -18,12 +18,15 @@ import org.bensam.experimental.capability.teleportation.TeleportationHelper;
 import org.bensam.experimental.network.PacketUpdateTeleportBeacon;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
@@ -36,11 +39,14 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -49,7 +55,7 @@ public class ItemTeleportationWand extends ItemBase
 {
     public static final int CHARGE_ANIMATION_DELAY_TICKS = 10;
     public static final int CHARGE_ANIMATION_FRAMES = 5;
-    public static final int CHARGE_UP_TIME_TICKS = 40; // 20 ticks per second
+    public static final int CHARGE_UP_TIME_TICKS = 40; // = 2 seconds @ 20 ticks per second
     public static final int COOLDOWN_TIME_TICKS = 40;
     
     public ItemTeleportationWand(String name)
@@ -58,6 +64,8 @@ public class ItemTeleportationWand extends ItemBase
         setMaxStackSize(1);
         setMaxDamage(25); // number of uses before the wand breaks
         
+        // animationIndex is used in the item model json to determine which model variant to use for rendering.
+        // Values returned range from 0.0 to 1.0.
         this.addPropertyOverride(new ResourceLocation("animationIndex"), new IItemPropertyGetter()
         {
             @SideOnly(Side.CLIENT)
@@ -119,7 +127,19 @@ public class ItemTeleportationWand extends ItemBase
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand)
     {
         player.setActiveHand(hand);
-        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+
+        if (world.isRemote && player.isSneaking())
+        {
+            RayTraceResult mouseOverResult = Minecraft.getMinecraft().objectMouseOver;
+            if (mouseOverResult.typeOfHit == Type.ENTITY)
+            {
+                Entity entityHit = mouseOverResult.entityHit;
+                player.sendMessage(entityHit.getDisplayName().appendText(entityHit.hasCustomName() ? " (" + entityHit.getCustomNameTag() + ")" : ""));
+                return new ActionResult<ItemStack>(EnumActionResult.FAIL, player.getHeldItem(hand));
+            }
+        }
+        
+        return new ActionResult<ItemStack>(EnumActionResult.PASS, player.getHeldItem(hand));
     }
 
     /**
@@ -211,21 +231,49 @@ public class ItemTeleportationWand extends ItemBase
                         // Remove this active beacon from the player's network.
                         playerTeleportationHandler.removeDestination(uuid);
                         
-                        // Request a packet update so the client can get word that this beacon is no longer active for this player.
+                        // Send a packet update so the client can get word that this beacon is no longer active for this player.
                         ExperimentalMod.network.sendTo(new PacketUpdateTeleportBeacon(te.getPos(), false), (EntityPlayerMP) player);
                         player.sendMessage(new TextComponentString("Teleport: " + TextFormatting.DARK_GREEN + name + TextFormatting.RESET + " REMOVED from your network"));
                     }
                     else
                     {
                         // Add this beacon to the player's network.
-                        TeleportDestination destination = new TeleportDestination(uuid, name, DestinationType.BEACON, world.provider.getDimension(), pos, side);
+                        TeleportDestination destination = new TeleportDestination(uuid, name, DestinationType.BEACON, world.provider.getDimension(), pos);
                         playerTeleportationHandler.addOrReplaceDestination(destination);
                         
-                        // Request a packet update so the client can get word that this beacon is active for this player.
+                        // Send a packet update so the client can get word that this beacon is active for this player.
                         ExperimentalMod.network.sendTo(new PacketUpdateTeleportBeacon(te.getPos(), true), (EntityPlayerMP) player);
                         player.sendMessage(new TextComponentString("Teleport: " + TextFormatting.DARK_GREEN + name + TextFormatting.RESET + " ADDED to your network"));
                     }
                 }
+            }
+        }
+        else if (clickedBlock == ModBlocks.teleportBeacon) // running on client
+        {
+            TileEntityTeleportBeacon te = (TileEntityTeleportBeacon) world.getTileEntity(pos);
+            if (te.isActive)
+            {
+                // Beacon is deactivating.
+                world.playSound(player, pos, SoundEvents.BLOCK_CHORUS_FLOWER_DEATH,
+                        SoundCategory.BLOCKS, 1.0F, 1.0F);
+            }
+            else
+            {
+                // Beacon is about to activate.
+                double centerX = pos.getX() + 0.5D;
+                double centerY = pos.getY() + 1.35D;
+                double centerZ = pos.getZ() + 0.5D;
+                for (int i = 0; i < 64; ++i)
+                {
+                    double xSpeed = (ModHelper.random.nextBoolean() ? 1.0D : -1.0D) * (1.0D + (ModHelper.random.nextDouble() * 3.0D));
+                    double ySpeed = (ModHelper.random.nextBoolean() ? 1.0D : -1.0D) * (1.0D + (ModHelper.random.nextDouble() * 3.0D));
+                    double zSpeed = (ModHelper.random.nextBoolean() ? 1.0D : -1.0D) * (1.0D + (ModHelper.random.nextDouble() * 3.0D));
+                    
+                    world.spawnParticle(EnumParticleTypes.PORTAL, centerX, centerY, centerZ, xSpeed, ySpeed, zSpeed);
+                }
+        
+                world.playSound(player, pos, SoundEvents.BLOCK_END_PORTAL_SPAWN,
+                        SoundCategory.HOSTILE, 0.8F, 1.0F);
             }
         }
         
@@ -243,7 +291,7 @@ public class ItemTeleportationWand extends ItemBase
             Random rand = ModHelper.random;
             Vec3d playerPos = player.getPositionVector();
             
-            // Create an offset vector in front of the player, in the approximate location of the wand, where the particles will tend to be centered.
+            // Use an offset vector in front of the player, in the approximate location of the wand, where the particles will tend to be centered.
             Vec3d particleOffset = Vec3d.fromPitchYaw(0.0F, player.rotationYaw);
             boolean isRightHand = player.getActiveHand() == EnumHand.MAIN_HAND;
             if (player.getPrimaryHand() == EnumHandSide.LEFT)
@@ -252,6 +300,7 @@ public class ItemTeleportationWand extends ItemBase
             }
             particleOffset = isRightHand ? particleOffset.rotateYaw((float) (-Math.PI / 6.0D)) : particleOffset.rotateYaw((float) (Math.PI / 6.0D));
             
+            // Spawn all the particles.
             for (int i = 0; i < 6; ++i)
             {
                 double x = playerPos.x + particleOffset.x + ((rand.nextDouble() - 0.5D) * 0.5D);
@@ -289,9 +338,19 @@ public class ItemTeleportationWand extends ItemBase
                 TeleportDestination activeTeleportDestination = teleportationHandler.getActiveDestination();
                 if (activeTeleportDestination != null)
                 {
-                    if (teleportationHandler.validateDestination((EntityPlayer) entityLiving, activeTeleportDestination))
+                    if (teleportationHandler.validateDestination(entityLiving, activeTeleportDestination))
                     {
-                        TeleportationHelper.teleport(entityLiving, activeTeleportDestination, true);
+                        if (entityLiving.isRiding())
+                        {
+                            Entity entityRidden = TeleportationHelper.teleport(entityLiving.getRidingEntity(), activeTeleportDestination);
+                            TeleportationHelper.teleport(entityLiving, activeTeleportDestination);
+                            TeleportationHelper.remountRider(entityLiving, entityRidden);
+                        }
+                        else
+                        {
+                            TeleportationHelper.teleport(entityLiving, activeTeleportDestination);
+                        }
+                        
                     }
                     else if (activeTeleportDestination.destinationType != DestinationType.SPAWNBED || activeTeleportDestination.dimension != 0)
                     {

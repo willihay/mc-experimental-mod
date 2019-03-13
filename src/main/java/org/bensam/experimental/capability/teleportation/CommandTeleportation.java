@@ -54,17 +54,18 @@ public class CommandTeleportation extends CommandBase
         }
         
         String cmd = args[0];
-        int destinationIndex = -1;
+        int index = -1;
         
         // Get the target destination array index, if any.
         if (args.length >= 2)
         {
-            destinationIndex = parseInt(args[1], 1) - 1;
+            index = parseInt(args[1], 1);
         }
         
         if (cmd.equalsIgnoreCase("list"))
         {
-            executeListCommand(sender, destinationIndex);
+            index--; // need zero-based index
+            executeListCommand(sender, index);
         }
         else if (cmd.equalsIgnoreCase("delete"))
         {
@@ -72,11 +73,16 @@ public class CommandTeleportation extends CommandBase
             {
                 throw new CommandException("commands.td.destination.missing");
             }
-            executeDeleteCommand(sender, destinationIndex);
+            index--; // need zero-based index
+            executeDeleteCommand(sender, index);
+        }
+        else if (cmd.equalsIgnoreCase("prev"))
+        {
+            executeNextCommand(sender, index == -1 ? index : -index);
         }
         else if (cmd.equalsIgnoreCase("next"))
         {
-            executeNextCommand(sender);
+            executeNextCommand(sender, index == -1 ? 1 : index);
         }
         else
         {
@@ -101,10 +107,12 @@ public class CommandTeleportation extends CommandBase
             if (destinationIndex < 0)
             {
                 // List all the teleport destinations in this player's network.
+                int activeDestinationIndex = teleportationHandler.getActiveDestinationIndex();
                 for (int i = 0; i < destinationCount; i++)
                 {
                     TeleportDestination destination = teleportationHandler.getDestinationFromIndex(i);
-                    player.sendMessage(new TextComponentString((i + 1) + ") " + teleportationHandler.getLongFormattedName(player, destination)));
+                    TextFormatting destinationFormat = (i == activeDestinationIndex) ? TextFormatting.GOLD : TextFormatting.RESET;
+                    player.sendMessage(new TextComponentString(destinationFormat + Integer.toString(i + 1) + ") " + teleportationHandler.getLongFormattedName(player, destination, destinationFormat)));
                 }
             }
             else
@@ -163,7 +171,7 @@ public class CommandTeleportation extends CommandBase
         }
     }
 
-    private void executeNextCommand(ICommandSender sender) throws CommandException
+    private void executeNextCommand(ICommandSender sender, int count) throws CommandException
     {
         EntityPlayerMP player = getCommandSenderAsPlayer(sender);
         ITeleportationHandler teleportationHandler = player.getCapability(TeleportationHandlerCapabilityProvider.TELEPORTATION_CAPABILITY, null);
@@ -177,7 +185,23 @@ public class CommandTeleportation extends CommandBase
                 return;
             }
 
-            TeleportDestination destination = teleportationHandler.getNextActiveDestination();
+            TeleportDestination destination = teleportationHandler.getActiveDestination();
+            if (count < 0)
+            {
+                count = Math.abs(count);
+                for (int i = 1; i <= count; ++i)
+                {
+                    destination = teleportationHandler.getPreviousActiveDestination();
+                }
+            }
+            else
+            {
+                for (int i = 1; i <= count; ++i)
+                {
+                    destination = teleportationHandler.getNextActiveDestination();
+                }
+            }
+            
             player.sendMessage(new TextComponentString("Active Teleport: " + teleportationHandler.getShortFormattedName(player, destination)));
         }
     }
@@ -200,9 +224,9 @@ public class CommandTeleportation extends CommandBase
     {
         if (args.length == 1)
         {
-            return getListOfStringsMatchingLastWord(args, new String[] {"delete", "list", "next"});
+            return getListOfStringsMatchingLastWord(args, new String[] {"delete", "list", "next", "prev"});
         }
-        else if (args.length == 2 && !args[0].equalsIgnoreCase("next"))
+        else if (args.length == 2)
         {
             return Lists.newArrayList("2");
         }

@@ -62,11 +62,11 @@ public class EntityTeleportationTippedArrow extends EntityTippedArrow
 
             if (shooter != null)
             {
-                potion.affectEntity(this, shooter, entityHit, false);
+                potion.affectEntity(this, shooter, entityHit);
             }
             else if (sourceTileEntity != null)
             {
-                potion.affectEntity(this, sourceTileEntity, entityHit, false);
+                potion.affectEntity(this, sourceTileEntity, entityHit);
             }
         }
     }

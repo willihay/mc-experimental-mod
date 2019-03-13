@@ -6,14 +6,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
+import org.bensam.experimental.capability.teleportation.TeleportationHelper;
 import org.bensam.experimental.potion.PotionTeleportation;
+
+import com.google.common.base.Predicate;
 
 import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketMoveVehicle;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -83,8 +93,7 @@ public class EntityTeleportationSplashPotion extends EntityThrowable
     private void applySplash(RayTraceResult result, PotionTeleportation potion)
     {
         AxisAlignedBB axisalignedbb = this.getEntityBoundingBox().grow(4.0D, 2.0D, 4.0D);
-        //List<Entity> list = this.world.<Entity>getEntitiesWithinAABB(EntityLivingBase.class, axisalignedbb);
-        List<Entity> list = this.world.<Entity>getEntitiesWithinAABB(Entity.class, axisalignedbb);
+        List<Entity> list = this.world.<Entity>getEntitiesWithinAABB(Entity.class, axisalignedbb, TELEPORTABLE_DEFAULT);
 
         if (list.isEmpty())
         {
@@ -94,7 +103,7 @@ public class EntityTeleportationSplashPotion extends EntityThrowable
         {
             HashMap<Entity, Entity> riderMap = getRiders(list);
             
-            // Add any entities being ridden to the list of entities to teleport if they aren't already included in that list. 
+            // Add any entities being ridden by the entities in the list, if they aren't already included in that list. 
             for (Entity entityRidden : riderMap.values())
             {
                 if (!list.contains(entityRidden))
@@ -111,11 +120,11 @@ public class EntityTeleportationSplashPotion extends EntityThrowable
                 EntityLivingBase thrower = this.getThrower();
                 if (thrower != null)
                 {
-                    teleportedEntity = potion.affectEntity(this, thrower, entityToTeleport, false);
+                    teleportedEntity = potion.affectEntity(this, thrower, entityToTeleport);
                 }
                 else if (sourceTileEntity != null)
                 {
-                    teleportedEntity = potion.affectEntity(this, sourceTileEntity, entityToTeleport, false);
+                    teleportedEntity = potion.affectEntity(this, sourceTileEntity, entityToTeleport);
                 }
                 
                 if (hasPassengers && (entityToTeleport != teleportedEntity))
@@ -135,19 +144,27 @@ public class EntityTeleportationSplashPotion extends EntityThrowable
             {
                 Entity rider = riderSet.getKey();
                 Entity entityRidden = riderSet.getValue();
-                
-                if (!rider.isRiding() 
-                        && rider.dimension == entityRidden.dimension 
-                        && (rider.getPosition().distanceSqToCenter(entityRidden.posX, entityRidden.posY, entityRidden.posZ) < 4.0D))
-                {
-                    rider.startRiding(entityRidden, true);
-                }
+                TeleportationHelper.remountRider(rider, entityRidden);
             }
             
             this.setDeadNextUpdate = true;
         }
     }
-    
+
+    /** 
+     * Selects boats, minecarts, and living entities which are not spectating players.
+     */
+    public static final Predicate<Entity> TELEPORTABLE_DEFAULT = new Predicate<Entity>()
+    {
+        public boolean apply(@Nullable Entity entity)
+        {
+            return (entity instanceof EntityPlayer && !((EntityPlayer)entity).isSpectator()) 
+                    || (entity instanceof EntityLivingBase && !(entity instanceof EntityArmorStand)) 
+                    || (entity instanceof EntityBoat) 
+                    || (entity instanceof EntityMinecart);
+        }
+    };
+
     private HashMap<Entity, Entity> getRiders(List<Entity> list)
     {
         HashMap<Entity, Entity> riderMap = new HashMap<Entity, Entity>();
