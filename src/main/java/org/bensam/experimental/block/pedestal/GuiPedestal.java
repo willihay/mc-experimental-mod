@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.bensam.experimental.block.pedestal;
 
 import org.bensam.experimental.ExperimentalMod;
@@ -14,7 +11,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 
 /**
- * @author Will
+ * @author WilliHay
  *
  */
 public class GuiPedestal extends GuiContainer
@@ -43,7 +40,7 @@ public class GuiPedestal extends GuiContainer
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
     {
-        String name = I18n.format(ModBlocks.pedestal.getTranslationKey() + ".name");
+        String name = I18n.format(ModBlocks.PEDESTAL.getTranslationKey() + ".name");
         fontRenderer.drawString(name, xSize / 2 - fontRenderer.getStringWidth(name), 6, 0x404040);
         fontRenderer.drawString(playerInventory.getDisplayName().getUnformattedText(), 8, ySize - 94, 0x404040);
     }

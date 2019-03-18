@@ -1,11 +1,12 @@
 /**
  * 
  */
-package org.bensam.experimental;
+package org.bensam.experimental.util;
 
 import java.io.File;
 
 import org.apache.logging.log4j.Level;
+import org.bensam.experimental.ExperimentalMod;
 
 import net.minecraftforge.common.config.Configuration;
 
@@ -43,7 +44,7 @@ public class ModConfig
             {
                 if (configFileVersion.equals("1"))
                 {
-                    ExperimentalMod.logger.info("Converting config file to version {}", CONFIG_VERSION);
+                    ExperimentalMod.MOD_LOGGER.info("Converting config file to version {}", CONFIG_VERSION);
                     // Save config to update config version and default copper sword attack damage.
                     config.save();
                 }
@@ -51,7 +52,7 @@ public class ModConfig
         }
         catch (Exception ex)
         {
-            ExperimentalMod.logger.log(Level.ERROR, "Problem loading config file!", ex);
+            ExperimentalMod.MOD_LOGGER.log(Level.ERROR, "Problem loading config file!", ex);
         }
         finally
         {

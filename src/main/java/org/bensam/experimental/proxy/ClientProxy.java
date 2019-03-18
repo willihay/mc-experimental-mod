@@ -1,6 +1,3 @@
-/**
- * ClientProxy - client-specific code
- */
 package org.bensam.experimental.proxy;
 
 import org.bensam.experimental.ExperimentalMod;
@@ -8,65 +5,50 @@ import org.bensam.experimental.block.pedestal.RendererPedestal;
 import org.bensam.experimental.block.pedestal.TileEntityPedestal;
 import org.bensam.experimental.block.teleportbeacon.RendererTeleportBeacon;
 import org.bensam.experimental.block.teleportbeacon.TileEntityTeleportBeacon;
-import org.bensam.experimental.client.particle.ParticleTeleportationMagic;
 import org.bensam.experimental.entity.ModEntities;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.Item;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 /**
- * @author Will
+ * @author WilliHay
  *
  */
-public class ClientProxy extends CommonProxy
+public class ClientProxy implements IProxy
 {
     @Override
     public void preInit(FMLPreInitializationEvent event)
     {
-        super.preInit(event);
+        ExperimentalMod.MOD_LOGGER.info("** ClientProxy pre-initialization event **");
+        
+        ModEntities.registerRenderer();
+        ExperimentalMod.MOD_LOGGER.info("ModEntities renderers registered");
+        
+        registerTileEntityRenderers();
+        ExperimentalMod.MOD_LOGGER.info("TileEntity renderers registered");
+    }
+
+    private void registerTileEntityRenderers()
+    {
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPedestal.class, new RendererPedestal());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTeleportBeacon.class, new RendererTeleportBeacon());
     }
 
     @Override
     public void init(FMLInitializationEvent event)
     {
-        super.init(event);
-        ExperimentalMod.logger.info("** ClientProxy initialization event **");
-        //Minecraft.getMinecraft().effectRenderer.registerParticle(ExperimentalMod.TELEPORTATION_MAGIC_PARTICLE.getParticleID(), new ParticleTeleportationMagic.Factory());
+        ExperimentalMod.MOD_LOGGER.info("** ClientProxy initialization event **");
     }
 
     @Override
     public void postInit(FMLPostInitializationEvent event)
     {
-        super.postInit(event);
     }
 
-//    @Override
 //    public String localize(String unlocalized, Object... args)
 //    {
 //        return I18n.format(unlocalized, args);
 //    }
-
-    @Override
-    public void registerItemRenderer(Item item, int meta, String id)
-    {
-        ModelLoader.setCustomModelResourceLocation(item, meta,
-                new ModelResourceLocation(ExperimentalMod.MODID + ":" + id, "inventory"));
-        // TODO: should use item.g﻿etRegistryName() for first parameter in new MRL(...)
-    }
-
-    @Override
-    public void registerRenderers()
-    {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPedestal.class, new RendererPedestal());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTeleportBeacon.class, new RendererTeleportBeacon());
-        ModEntities.registerRenderer();
-    }
-
 }

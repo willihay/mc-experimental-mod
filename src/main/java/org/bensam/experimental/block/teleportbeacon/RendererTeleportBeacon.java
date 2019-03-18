@@ -9,10 +9,12 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.ForgeHooksClient;
 
+/**
+ * @author WilliHay
+ *
+ */
 public class RendererTeleportBeacon extends TileEntitySpecialRenderer<TileEntityTeleportBeacon>
 {
     

@@ -1,12 +1,12 @@
-/**
- * 
- */
 package org.bensam.experimental.block.mobdetector;
 
 import java.util.List;
 
-import org.bensam.experimental.block.BlockTileEntity;
+import javax.annotation.Nonnull;
 
+import org.bensam.experimental.util.ModSetup;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
@@ -22,16 +22,18 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 /**
- * @author Will
+ * @author WilliHay
  *
  */
-public class BlockMobDetector extends BlockTileEntity<TileEntityMobDetector>
+public class BlockMobDetector extends Block
 {
     public static final PropertyBool LIT = PropertyBool.create("lit");
 
-    public BlockMobDetector()
+    public BlockMobDetector(@Nonnull String name)
     {
-        super(Material.GLASS, "mob_detector");
+        super(Material.GLASS);
+        
+        ModSetup.setRegistryNames(this, name);
         setLightLevel(1.0F);
     }
 
@@ -50,15 +52,20 @@ public class BlockMobDetector extends BlockTileEntity<TileEntityMobDetector>
     //    }
 
     @Override
-    public Class<TileEntityMobDetector> getTileEntityClass()
+    public boolean hasTileEntity(IBlockState state)
     {
-        return TileEntityMobDetector.class;
+        return true;
     }
 
     @Override
     public TileEntityMobDetector createTileEntity(World world, IBlockState state)
     {
         return new TileEntityMobDetector();
+    }
+    
+    public TileEntityMobDetector getTileEntity(@Nonnull IBlockAccess world, BlockPos pos)
+    {
+        return (TileEntityMobDetector) world.getTileEntity(pos);
     }
 
     @Override

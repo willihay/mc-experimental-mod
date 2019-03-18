@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.bensam.experimental.block.mobdetector;
 
 import java.util.List;
@@ -11,7 +8,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 
 /**
- * @author Will
+ * @author WilliHay
  *
  */
 public class TileEntityMobDetector extends TileEntity implements ITickable
@@ -46,7 +43,7 @@ public class TileEntityMobDetector extends TileEntity implements ITickable
 
     private void updateMobCount()
     {
-        // Count the entities every #INITIAL_DELAY ticks (usu. there are 20 ticks/second).
+        // Count the entities every #INITIAL_DELAY ticks (20 ticks/second).
         updateDelayCounter--;
         if (updateDelayCounter <= 0)
         {

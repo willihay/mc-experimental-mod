@@ -5,6 +5,10 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderTippedArrow;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 
+/**
+ * @author WilliHay
+ *
+ */
 public class RenderTeleportationTippedArrow extends RenderTippedArrow
 {
     public static final Factory RENDER_FACTORY = new Factory();

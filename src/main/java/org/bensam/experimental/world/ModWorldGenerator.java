@@ -16,15 +16,12 @@ import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
 /**
- * @author Will
+ * @author WilliHay
  *
  */
 public class ModWorldGenerator implements IWorldGenerator
 {
 
-    /* (non-Javadoc)
-     * @see net.minecraftforge.fml.common.IWorldGenerator#generate(java.util.Random, int, int, net.minecraft.world.World, net.minecraft.world.gen.IChunkGenerator, net.minecraft.world.chunk.IChunkProvider)
-     */
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator,
                          IChunkProvider chunkProvider)
@@ -39,7 +36,7 @@ public class ModWorldGenerator implements IWorldGenerator
                                    IChunkProvider chunkProvider)
     {
         // Note: chunks are 16 x 16
-        generateOre(ModBlocks.copperOre.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 16, 64,
+        generateOre(ModBlocks.COPPER_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 16, 64,
                 4 + random.nextInt(4), 18);
     }
 

@@ -1,8 +1,7 @@
 package org.bensam.experimental.entity;
 
-import org.bensam.experimental.ExperimentalMod;
-import org.bensam.experimental.capability.teleportation.TeleportationHelper;
 import org.bensam.experimental.item.ModItems;
+import org.bensam.experimental.potion.ModPotions;
 import org.bensam.experimental.potion.PotionTeleportation;
 
 import net.minecraft.dispenser.IBlockSource;
@@ -13,9 +12,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
+/**
+ * @author WilliHay
+ *
+ */
 public class EntityTeleportationTippedArrow extends EntityTippedArrow
 {
-    private TileEntity sourceTileEntity;
+    protected TileEntity sourceTileEntity;
     
     public EntityTeleportationTippedArrow(World world)
     {
@@ -46,8 +49,7 @@ public class EntityTeleportationTippedArrow extends EntityTippedArrow
     @Override
     public int getColor()
     {
-        PotionTeleportation potion = new PotionTeleportation();
-        return potion.getLiquidColor();
+        return ModPotions.TELEPORTATION_POTION.getLiquidColor();
     }
 
     @Override
@@ -57,7 +59,7 @@ public class EntityTeleportationTippedArrow extends EntityTippedArrow
         
         if (!world.isRemote) // running on server
         {
-            PotionTeleportation potion = new PotionTeleportation();
+            PotionTeleportation potion = ModPotions.TELEPORTATION_POTION;
             Entity shooter = this.shootingEntity;
 
             if (shooter != null)
@@ -74,7 +76,7 @@ public class EntityTeleportationTippedArrow extends EntityTippedArrow
     @Override
     protected ItemStack getArrowStack()
     {
-        return new ItemStack(ModItems.teleportationTippedArrow);
+        return new ItemStack(ModItems.TELEPORTATION_TIPPED_ARROW);
     }
 
 }

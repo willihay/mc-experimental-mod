@@ -1,4 +1,4 @@
-package org.bensam.experimental;
+package org.bensam.experimental.util;
 
 import java.util.Random;
 
@@ -7,7 +7,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-public class ModHelper
+public final class ModUtil
 {
     public static final Random random = new Random();
     

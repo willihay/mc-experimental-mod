@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.bensam.experimental.entity;
 
 import org.bensam.experimental.ExperimentalMod;
@@ -17,35 +14,14 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 
 /**
- * @author Will
+ * @author WilliHay
  *
  */
 public class ModEntities
 {
     private static int networkID = 1; // unique ID for entities from this mod
     
-    // @formatter:off
-    public static void preInit()
-    {
-//        EntityRegistry.registerModEntity(new ResourceLocation(ExperimentalMod.MODID, "health_zombie"), EntityHealthZombie.class, "health_zombie", networkID++, ExperimentalMod.instance,
-//                /* trackingRange */ 64,
-//                /* updateFrequency */ 3,
-//                /* sendsVelocityUpdates */ true,
-//                /* primaryEgg */ 0x996600,
-//                /* secondaryEgg */ 0x00ff00);
-        
-//        EntityRegistry.addSpawn(EntityHealthZombie.class, 
-//                /* weightedProb */ 100, 
-//                /* min */ 3, 
-//                /* max */ 5, 
-//                /* typeOfCreature */ EnumCreatureType.MONSTER, 
-//                /* biomes */ Biomes.PLAINS, Biomes.ICE_PLAINS, Biomes.SAVANNA, Biomes.SAVANNA_PLATEAU);
-        
-//        LootTableList.register(EntityHealthZombie.LOOT);
-    }
-    // @formatter:on
-
-    public static void registerEntities(IForgeRegistry<EntityEntry> registry)
+    public static void register(IForgeRegistry<EntityEntry> registry)
     {
         EntityEntry entryTeleportationSplashPotion = EntityEntryBuilder.create()
                 .id(new ResourceLocation(ExperimentalMod.MODID, "teleportation_splash_potion"), networkID++)
@@ -64,6 +40,23 @@ public class ModEntities
                 .build();
 
         registry.register(entryTeleportationTippedArrow);
+
+        // previously called from preInit()
+//      EntityRegistry.registerModEntity(new ResourceLocation(ExperimentalMod.MODID, "health_zombie"), EntityHealthZombie.class, "health_zombie", networkID++, ExperimentalMod.instance,
+//      /* trackingRange */ 64,
+//      /* updateFrequency */ 3,
+//      /* sendsVelocityUpdates */ true,
+//      /* primaryEgg */ 0x996600,
+//      /* secondaryEgg */ 0x00ff00);
+
+//      EntityRegistry.addSpawn(EntityHealthZombie.class, 
+//      /* weightedProb */ 100, 
+//      /* min */ 3, 
+//      /* max */ 5, 
+//      /* typeOfCreature */ EnumCreatureType.MONSTER, 
+//      /* biomes */ Biomes.PLAINS, Biomes.ICE_PLAINS, Biomes.SAVANNA, Biomes.SAVANNA_PLATEAU);
+
+//      LootTableList.register(EntityHealthZombie.LOOT);
     }
 
     public static void registerRenderer()

@@ -2,18 +2,17 @@ package org.bensam.experimental.block.teleportbeacon;
 
 import java.util.UUID;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 import org.bensam.experimental.ExperimentalMod;
-import org.bensam.experimental.block.BlockTileEntity;
 import org.bensam.experimental.capability.teleportation.ITeleportationHandler;
 import org.bensam.experimental.capability.teleportation.TeleportDestination;
 import org.bensam.experimental.capability.teleportation.TeleportationHandlerCapabilityProvider;
 import org.bensam.experimental.item.ModItems;
 import org.bensam.experimental.network.PacketUpdateTeleportBeacon;
+import org.bensam.experimental.util.ModSetup;
 
-import net.minecraft.block.BlockFence;
-import net.minecraft.block.BlockPane;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -39,17 +38,49 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-public class BlockTeleportBeacon extends BlockTileEntity<TileEntityTeleportBeacon>
+/**
+ * @author WilliHay
+ *
+ */
+public class BlockTeleportBeacon extends Block
 {
     public static final PropertyBool IS_ACTIVE = PropertyBool.create("is_active");
     protected static final AxisAlignedBB BLOCK_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.125D, 1.0D);
     
-    public BlockTeleportBeacon()
+    public BlockTeleportBeacon(@Nonnull String name)
     {
-        super(Material.ROCK, "teleport_beacon");
+        super(Material.ROCK);
+        
+        ModSetup.setRegistryNames(this, name);
         setDefaultState(this.blockState.getBaseState().withProperty(IS_ACTIVE, false));
         setHardness(5.0F); // enchantment table = 5.0F
         setResistance(2000.F); // enchantment table = 2000.F
+    }
+
+    @Override
+    public boolean hasTileEntity(IBlockState state)
+    {
+        return true;
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, IS_ACTIVE);
+    }
+
+    @Override
+    public TileEntityTeleportBeacon createTileEntity(World world, IBlockState state)
+    {
+        TileEntityTeleportBeacon te = new TileEntityTeleportBeacon();
+        te.isActive = state.getValue(IS_ACTIVE).booleanValue();
+        te.particleSpawnStartTime = world.getTotalWorldTime();
+        return te;
+    }
+    
+    public TileEntityTeleportBeacon getTileEntity(@Nonnull IBlockAccess world, BlockPos pos)
+    {
+        return (TileEntityTeleportBeacon) world.getTileEntity(pos);
     }
 
     @Override
@@ -94,27 +125,6 @@ public class BlockTeleportBeacon extends BlockTileEntity<TileEntityTeleportBeaco
     public boolean isPassable(IBlockAccess worldIn, BlockPos pos)
     {
         return true;
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, IS_ACTIVE);
-    }
-
-    @Nullable
-    @Override
-    public TileEntityTeleportBeacon createTileEntity(World world, IBlockState state)
-    {
-        TileEntityTeleportBeacon te = new TileEntityTeleportBeacon();
-        te.isActive = state.getValue(IS_ACTIVE).booleanValue();
-        return te;
-    }
-
-    @Override
-    public Class<TileEntityTeleportBeacon> getTileEntityClass()
-    {
-        return TileEntityTeleportBeacon.class;
     }
 
     @Override
@@ -167,7 +177,7 @@ public class BlockTeleportBeacon extends BlockTileEntity<TileEntityTeleportBeaco
 
             if (uuid == null || uuid.equals(new UUID(0, 0)) || name == null || name.isEmpty())
             {
-                ExperimentalMod.logger.warn("Something went wrong! Teleport Beacon block activated with invalid UUID or name fields. Setting to defaults...");
+                ExperimentalMod.MOD_LOGGER.warn("Something went wrong! Teleport Beacon block activated with invalid UUID or name fields. Setting to defaults...");
                 te.setDefaultUUID();
                 te.setBeaconName(null);
                 
@@ -176,7 +186,7 @@ public class BlockTeleportBeacon extends BlockTileEntity<TileEntityTeleportBeaco
             }
             
             // Send the name of the beacon to the player if they're not using a teleport wand.
-            if (player.getHeldItem(hand).getItem() != ModItems.teleportationWand)
+            if (player.getHeldItem(hand).getItem() != ModItems.TELEPORTATION_WAND)
             {
                 player.sendMessage(new TextComponentString("Teleport Beacon: " + TextFormatting.DARK_GREEN + name));
             }
@@ -222,12 +232,12 @@ public class BlockTeleportBeacon extends BlockTileEntity<TileEntityTeleportBeaco
                 if (name == null || name.isEmpty())
                 {
                     te.setBeaconName(null); // Set beacon name to a default-generated name.
-                    ExperimentalMod.logger.info("New Teleport Beacon placed: name = {}", te.getBeaconName());
+                    ExperimentalMod.MOD_LOGGER.info("New Teleport Beacon placed: name = {}", te.getBeaconName());
                 }
             }
             else
             {
-                ExperimentalMod.logger.info("Teleport Beacon placed: name = {}", name);
+                ExperimentalMod.MOD_LOGGER.info("Teleport Beacon placed: name = {}", name);
                 
                 ITeleportationHandler teleportationHandler = placer.getCapability(TeleportationHandlerCapabilityProvider.TELEPORTATION_CAPABILITY, null);
                 if (teleportationHandler != null)

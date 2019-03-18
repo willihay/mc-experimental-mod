@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bensam.experimental.ExperimentalMod;
-import org.bensam.experimental.ModHelper;
 import org.bensam.experimental.block.ModBlocks;
 import org.bensam.experimental.block.teleportbeacon.TileEntityTeleportBeacon;
 import org.bensam.experimental.capability.teleportation.ITeleportationHandler;
@@ -16,6 +16,9 @@ import org.bensam.experimental.capability.teleportation.TeleportDestination.Dest
 import org.bensam.experimental.capability.teleportation.TeleportationHandlerCapabilityProvider;
 import org.bensam.experimental.capability.teleportation.TeleportationHelper;
 import org.bensam.experimental.network.PacketUpdateTeleportBeacon;
+import org.bensam.experimental.sound.ModSounds;
+import org.bensam.experimental.util.ModSetup;
+import org.bensam.experimental.util.ModUtil;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -26,9 +29,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.IItemPropertyGetter;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntityDispenser;
@@ -45,22 +48,26 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemTeleportationWand extends ItemBase
+/**
+ * @author WilliHay
+ *
+ */
+public class ItemTeleportationWand extends Item
 {
     public static final int CHARGE_ANIMATION_DELAY_TICKS = 10;
     public static final int CHARGE_ANIMATION_FRAMES = 5;
     public static final int CHARGE_UP_TIME_TICKS = 40; // = 2 seconds @ 20 ticks per second
     public static final int COOLDOWN_TIME_TICKS = 40;
     
-    public ItemTeleportationWand(String name)
+    public ItemTeleportationWand(@Nonnull String name)
     {
-        super(name);
+        ModSetup.setRegistryNames(this, name);
+        ModSetup.setCreativeTab(this);
         setMaxStackSize(1);
         setMaxDamage(25); // number of uses before the wand breaks
         
@@ -218,7 +225,7 @@ public class ItemTeleportationWand extends ItemBase
                     
                     return EnumActionResult.FAIL;
                 }
-                else if (clickedBlock == ModBlocks.teleportBeacon && !(player.getCooldownTracker().hasCooldown(this)))
+                else if (clickedBlock == ModBlocks.TELEPORT_BEACON && !(player.getCooldownTracker().hasCooldown(this)))
                 {
                     // Toggle the inclusion of this teleport beacon in the player's teleport destination network.
                     
@@ -248,32 +255,41 @@ public class ItemTeleportationWand extends ItemBase
                 }
             }
         }
-        else if (clickedBlock == ModBlocks.teleportBeacon) // running on client
+        else if (clickedBlock == ModBlocks.TELEPORT_BEACON) // running on client
         {
+            double centerX = pos.getX() + 0.5D;
+            double centerY = pos.getY() + 1.0D;
+            double centerZ = pos.getZ() + 0.5D;
             TileEntityTeleportBeacon te = (TileEntityTeleportBeacon) world.getTileEntity(pos);
             if (te.isActive)
             {
+                for (int i = 0; i < 64; ++i)
+                {
+                    double xSpeed = (ModUtil.random.nextBoolean() ? 1.0D : -1.0D);
+                    double ySpeed = (ModUtil.random.nextBoolean() ? 1.0D : -1.0D) * (1.0D + ModUtil.random.nextDouble());
+                    double zSpeed = (ModUtil.random.nextBoolean() ? 1.0D : -1.0D);
+                    
+                    world.spawnParticle(EnumParticleTypes.PORTAL, centerX, centerY, centerZ, xSpeed, ySpeed, zSpeed);
+                }
+
                 // Beacon is deactivating.
-                world.playSound(player, pos, SoundEvents.BLOCK_CHORUS_FLOWER_DEATH,
+                world.playSound(player, pos, ModSounds.DEACTIVATE_TELEPORT_BEACON,
                         SoundCategory.BLOCKS, 1.0F, 1.0F);
             }
             else
             {
-                // Beacon is about to activate.
-                double centerX = pos.getX() + 0.5D;
-                double centerY = pos.getY() + 1.35D;
-                double centerZ = pos.getZ() + 0.5D;
                 for (int i = 0; i < 64; ++i)
                 {
-                    double xSpeed = (ModHelper.random.nextBoolean() ? 1.0D : -1.0D) * (1.0D + (ModHelper.random.nextDouble() * 3.0D));
-                    double ySpeed = (ModHelper.random.nextBoolean() ? 1.0D : -1.0D) * (1.0D + (ModHelper.random.nextDouble() * 3.0D));
-                    double zSpeed = (ModHelper.random.nextBoolean() ? 1.0D : -1.0D) * (1.0D + (ModHelper.random.nextDouble() * 3.0D));
+                    double xSpeed = (ModUtil.random.nextBoolean() ? 1.0D : -1.0D) * (1.0D + (ModUtil.random.nextDouble() * 3.0D));
+                    double ySpeed = (ModUtil.random.nextBoolean() ? 1.0D : -1.0D) * (1.0D + (ModUtil.random.nextDouble() * 3.0D));
+                    double zSpeed = (ModUtil.random.nextBoolean() ? 1.0D : -1.0D) * (1.0D + (ModUtil.random.nextDouble() * 3.0D));
                     
                     world.spawnParticle(EnumParticleTypes.PORTAL, centerX, centerY, centerZ, xSpeed, ySpeed, zSpeed);
                 }
-        
-                world.playSound(player, pos, SoundEvents.BLOCK_END_PORTAL_SPAWN,
-                        SoundCategory.HOSTILE, 0.8F, 1.0F);
+
+                // Beacon is about to activate.
+                world.playSound(player, pos, ModSounds.ACTIVATE_TELEPORT_BEACON,
+                        SoundCategory.BLOCKS, 1.0F, 1.0F);
             }
         }
         
@@ -288,7 +304,7 @@ public class ItemTeleportationWand extends ItemBase
         if (world.isRemote && ((getMaxItemUseDuration(stack) - count) > CHARGE_ANIMATION_DELAY_TICKS))
         {
             // Create portal-type particles around the player's wand when it's being charged up.
-            Random rand = ModHelper.random;
+            Random rand = ModUtil.random;
             Vec3d playerPos = player.getPositionVector();
             
             // Use an offset vector in front of the player, in the approximate location of the wand, where the particles will tend to be centered.
@@ -323,7 +339,7 @@ public class ItemTeleportationWand extends ItemBase
                                       float hitX, float hitY, float hitZ)
     {
         //Block clickedBlock = world.getBlockState(pos).getBlock();
-        //ExperimentalMod.logger.info("onItemUse: Wand right-clicked on block " + clickedBlock.getLocalizedName() + " at " + pos);
+        //ExperimentalMod.MOD_LOGGER.info("onItemUse: Wand right-clicked on block " + clickedBlock.getLocalizedName() + " at " + pos);
         return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
     }
 
@@ -340,7 +356,7 @@ public class ItemTeleportationWand extends ItemBase
                 {
                     if (teleportationHandler.validateDestination(entityLiving, activeTeleportDestination))
                     {
-                        if (entityLiving.isRiding())
+                        if (entityLiving.isRiding() && (entityLiving.getRidingEntity() instanceof EntityLivingBase))
                         {
                             Entity entityRidden = TeleportationHelper.teleport(entityLiving.getRidingEntity(), activeTeleportDestination);
                             TeleportationHelper.teleport(entityLiving, activeTeleportDestination);

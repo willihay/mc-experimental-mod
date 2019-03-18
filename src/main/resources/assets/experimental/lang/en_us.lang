@@ -11,6 +11,7 @@ commands.td.destination.notFound=%s is an invalid teleport destination number in
 commands.td.delete.spawnBed.invalid=Cannot remove Overworld spawn bed - this is a fixed teleport destination
 
 # Items
+item.copper_ingot.name=Copper Ingot
 item.copper_sword.name=Copper Sword
 item.copper_pickaxe.name=Copper Pickaxe
 item.copper_axe.name=Copper Axe
@@ -25,7 +26,6 @@ item.corn_bread.name=Corn Bread
 item.corn_seed.name=Corn Seed
 item.creamed_corn_soup.name=Creamed Corn Soup
 item.ender_eye_shard.name=Eye of Ender Shard
-item.ingot_copper.name=Copper Ingot
 item.teleportation_splash_potion.name=Splash Potion of Teleportation
 item.teleportation_tipped_arrow.name=Arrow of Teleportation
 item.teleportation_wand.name=Wand of Teleportation
@@ -37,7 +37,7 @@ item.teleportation_wand.tipLine4=%1$s- Hold down Use button to teleport.
 # Blocks
 tile.counter.name=Counter
 tile.mob_detector.name=Mob Detector
-tile.ore_copper.name=Copper Ore
+tile.copper_ore.name=Copper Ore
 tile.pedestal.name=Pedestal
 tile.teleport_beacon.name=Teleport Beacon
 
@@ -46,6 +46,10 @@ entity.health_zombie.name=Health Zombie
 
 # Potions
 effect.teleportation_potion=Teleportation
+
+# Sounds
+subtitle.activate_teleport_beacon=Teleport Beacon Activated
+subtitle.deactivate_teleport_beacon=Teleport Beacon Deactivated
 
 # Miscellaneous Messages
 message.death_coordinates=You died at %s

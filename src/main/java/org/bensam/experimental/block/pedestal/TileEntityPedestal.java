@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.bensam.experimental.block.pedestal;
 
 import javax.annotation.Nullable;
@@ -19,7 +16,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 /**
- * @author Will
+ * @author WilliHay
  *
  */
 public class TileEntityPedestal extends TileEntity
@@ -84,6 +81,7 @@ public class TileEntityPedestal extends TileEntity
     }
 
     // @formatter:off
+    @SuppressWarnings("unchecked")
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)

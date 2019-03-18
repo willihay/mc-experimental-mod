@@ -1,13 +1,10 @@
-/**
- * 
- */
 package org.bensam.experimental.block.counter;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
 /**
- * @author Will
+ * @author WilliHay
  *
  */
 public class TileEntityCounter extends TileEntity

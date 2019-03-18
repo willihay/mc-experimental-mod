@@ -5,11 +5,11 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import org.bensam.experimental.ExperimentalMod;
-import org.bensam.experimental.ModHelper;
 import org.bensam.experimental.block.ModBlocks;
 import org.bensam.experimental.client.particle.ParticleTeleportationMagic;
 import org.bensam.experimental.item.ModItems;
 import org.bensam.experimental.network.PacketRequestUpdateTeleportBeacon;
+import org.bensam.experimental.util.ModUtil;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
@@ -21,10 +21,14 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IWorldNameable;
 
+/**
+ * @author WilliHay
+ *
+ */
 public class TileEntityTeleportBeacon extends TileEntity implements IWorldNameable, ITickable
 {
-    public static final ItemStack TOPPER_ITEM_WHEN_ACTIVE = new ItemStack(ModItems.enderEyeTranslucent);
-    public static final long PARTICLE_APPEARANCE_DELAY = 40; // how many ticks after becoming active until particles should start spawning
+    public static ItemStack TOPPER_ITEM_WHEN_ACTIVE = null;
+    public static final long PARTICLE_APPEARANCE_DELAY = 50; // how many ticks after becoming active until particles should start spawning
     
     // particle path characteristics
     public static final double PARTICLE_ANGULAR_VELOCITY = Math.PI / 10.0D; // (PI/10 radians/tick) x (20 ticks/sec) = 1 complete circle / second for each particle
@@ -42,13 +46,18 @@ public class TileEntityTeleportBeacon extends TileEntity implements IWorldNameab
     private String beaconName = "";
     private UUID uniqueID = new UUID(0, 0);
 
+    public TileEntityTeleportBeacon()
+    {
+        TOPPER_ITEM_WHEN_ACTIVE = new ItemStack(ModItems.ENDER_EYE_TRANSLUCENT);
+    }
+    
     @Override
     public void onLoad()
     {
         if (world.isRemote) // running on client
         {
             // Set an initial, random spawn angle for particles.
-            particleSpawnAngle = ModHelper.random.nextDouble() * Math.PI;
+            particleSpawnAngle = ModUtil.random.nextDouble() * Math.PI;
             
             // Request an update from the server on the "active" status for this TE for the current player (i.e. client).
             // If TE is active, response logic will also set the particleSpawnStartTime.
@@ -63,7 +72,7 @@ public class TileEntityTeleportBeacon extends TileEntity implements IWorldNameab
         {
             long totalWorldTime = world.getTotalWorldTime();
 
-            if (totalWorldTime >= particleSpawnStartTime)
+            if (totalWorldTime >= particleSpawnStartTime + PARTICLE_APPEARANCE_DELAY)
             {
                 // Spawn active beacon particles.
                 particleSpawnAngle += PARTICLE_ANGULAR_VELOCITY;
@@ -106,7 +115,7 @@ public class TileEntityTeleportBeacon extends TileEntity implements IWorldNameab
     {
         beaconName = compound.getString("beaconName");
         uniqueID = compound.getUniqueId("uniqueID");
-        ExperimentalMod.logger.info("TileEntityTeleportBeacon.readFromNBT: beaconName = {}, uniqueID = {}", beaconName, uniqueID);
+        ExperimentalMod.MOD_LOGGER.info("TileEntityTeleportBeacon.readFromNBT: beaconName = {}, uniqueID = {}", beaconName, uniqueID);
 
         super.readFromNBT(compound);
     }
@@ -136,11 +145,11 @@ public class TileEntityTeleportBeacon extends TileEntity implements IWorldNameab
         
         if (isDataValid)
         {
-            ExperimentalMod.logger.info("TileEntityTeleportBeacon.writeToNBT: beaconName = {}, uniqueID = {}, {}", beaconName, uniqueID, pos);
+            ExperimentalMod.MOD_LOGGER.info("TileEntityTeleportBeacon.writeToNBT: beaconName = {}, uniqueID = {}, {}", beaconName, uniqueID, pos);
         }
         else
         {
-            ExperimentalMod.logger.warn("TileEntityTeleportBeacon.writeToNBT: TE contains invalid data... beaconName = {}, uniqueID = {}, {}", beaconName, uniqueID, pos);
+            ExperimentalMod.MOD_LOGGER.warn("TileEntityTeleportBeacon.writeToNBT: TE contains invalid data... beaconName = {}, uniqueID = {}, {}", beaconName, uniqueID, pos);
         }
 
         return super.writeToNBT(compound);
@@ -169,7 +178,7 @@ public class TileEntityTeleportBeacon extends TileEntity implements IWorldNameab
     {
         if (name == null || name.isEmpty())
         {
-            beaconName = "Beacon " + ModHelper.getRandomLetter() + String.format("%02d", ModHelper.random.nextInt(100));
+            beaconName = "Beacon " + ModUtil.getRandomLetter() + String.format("%02d", ModUtil.random.nextInt(100));
         }
         else
         {
@@ -181,7 +190,7 @@ public class TileEntityTeleportBeacon extends TileEntity implements IWorldNameab
     @Override
     public String getName()
     {
-        return hasCustomName() ? beaconName : ModBlocks.teleportBeacon.getTranslationKey();
+        return hasCustomName() ? beaconName : ModBlocks.TELEPORT_BEACON.getTranslationKey();
     }
 
     @Override

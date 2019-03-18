@@ -1,40 +1,25 @@
-/**
- * BlockOre - convenience class for adding ores
- */
 package org.bensam.experimental.block;
 
+import javax.annotation.Nonnull;
+
+import org.bensam.experimental.util.ModSetup;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraftforge.oredict.OreDictionary;
 
 /**
- * @author Will
+ * @author WilliHay
  *
  */
-public class BlockOre extends BlockBase
+public class BlockOre extends Block
 {
-    private String oreName;
 
-    public BlockOre(String name, String oreName)
+    public BlockOre(@Nonnull String name)
     {
-        super(Material.ROCK, name);
-
-        this.oreName = oreName;
-
+        super(Material.ROCK);
+        
+        ModSetup.setRegistryNames(this, name);
         setHardness(3f);
         setResistance(5f);
     }
-
-    public void initOreDictionary()
-    {
-        OreDictionary.registerOre(oreName, this);
-    }
-
-    @Override
-    public BlockOre setCreativeTab(CreativeTabs tab)
-    {
-        super.setCreativeTab(tab);
-        return this;
-    }
-
 }

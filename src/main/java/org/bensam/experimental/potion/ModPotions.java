@@ -1,5 +1,6 @@
 package org.bensam.experimental.potion;
 
+import org.bensam.experimental.ExperimentalMod;
 import org.bensam.experimental.item.ModItems;
 
 import net.minecraft.init.Items;
@@ -9,23 +10,30 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraftforge.common.brewing.BrewingRecipe;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.registries.IForgeRegistry;
 
 /**
- * @author Will
+ * @author WilliHay
  *
  */
+@ObjectHolder(ExperimentalMod.MODID)
 public class ModPotions
 {
-    public static final Potion TELEPORTATION = new PotionTeleportation();
+    public static final PotionTeleportation TELEPORTATION_POTION = null;
 
-    public static void registerPotions()
+    public static void register(IForgeRegistry<Potion> registry)
     {
-        ForgeRegistries.POTIONS.register(TELEPORTATION);
+        registry.register(new PotionTeleportation().setup("teleportation_potion"));
         
+        registerRecipes();
+    }
+    
+    private static void registerRecipes()
+    {
         ItemStack inputPotion = PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.AWKWARD);
-        ItemStack ingredient = new ItemStack(ModItems.enderEyeShard);
-        ItemStack outputPotion = PotionUtils.addPotionToItemStack(new ItemStack(ModItems.teleportationSplashPotion), PotionTypes.EMPTY);
+        ItemStack ingredient = new ItemStack(ModItems.ENDER_EYE_SHARD);
+        ItemStack outputPotion = PotionUtils.addPotionToItemStack(new ItemStack(ModItems.TELEPORTATION_SPLASH_POTION), PotionTypes.EMPTY);
         BrewingRecipeRegistry.addRecipe(new CustomBrewingRecipe(inputPotion, ingredient, outputPotion));
     }
 }

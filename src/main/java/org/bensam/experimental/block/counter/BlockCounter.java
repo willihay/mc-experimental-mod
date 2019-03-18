@@ -1,12 +1,10 @@
-/**
- * 
- */
 package org.bensam.experimental.block.counter;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
-import org.bensam.experimental.block.BlockTileEntity;
+import org.bensam.experimental.util.ModSetup;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,30 +12,37 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 /**
- * @author Will
+ * @author WilliHay
  *
  */
-public class BlockCounter extends BlockTileEntity<TileEntityCounter>
+public class BlockCounter extends Block
 {
-    public BlockCounter()
+    public BlockCounter(@Nonnull String name)
     {
-        super(Material.ROCK, "counter");
+        super(Material.ROCK);
+        
+        ModSetup.setRegistryNames(this, name);
     }
 
     @Override
-    public Class<TileEntityCounter> getTileEntityClass()
+    public boolean hasTileEntity(IBlockState state)
     {
-        return TileEntityCounter.class;
+        return true;
     }
 
-    @Nullable
     @Override
     public TileEntityCounter createTileEntity(World world, IBlockState state)
     {
         return new TileEntityCounter();
+    }
+    
+    public TileEntityCounter getTileEntity(@Nonnull IBlockAccess world, BlockPos pos)
+    {
+        return (TileEntityCounter) world.getTileEntity(pos);
     }
 
     @Override
@@ -55,10 +60,10 @@ public class BlockCounter extends BlockTileEntity<TileEntityCounter>
             {
                 tile.incrementCount();
             }
+            
             player.sendMessage(new TextComponentString("Count: " + tile.getCount()));
         }
 
         return true;
     }
-
 }

@@ -8,10 +8,10 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import org.bensam.experimental.ExperimentalMod;
-import org.bensam.experimental.ModHelper;
 import org.bensam.experimental.block.ModBlocks;
 import org.bensam.experimental.block.teleportbeacon.TileEntityTeleportBeacon;
 import org.bensam.experimental.capability.teleportation.TeleportDestination.DestinationType;
+import org.bensam.experimental.util.ModUtil;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -126,7 +126,7 @@ public class TeleportationHandler implements ITeleportationHandler, INBTSerializ
             beaconNameFormat = isValid ? TextFormatting.DARK_GREEN : TextFormatting.DARK_GRAY;
         }
         
-        return beaconNameFormat + destination.friendlyName + defaultFormat + " (" + ModHelper.getDimensionName(destination.dimension) + ")";
+        return beaconNameFormat + destination.friendlyName + defaultFormat + " (" + ModUtil.getDimensionName(destination.dimension) + ")";
     }
 
     @Override
@@ -154,7 +154,7 @@ public class TeleportationHandler implements ITeleportationHandler, INBTSerializ
                 + " at {" + destination.position.getX() + ", " 
                 + destination.position.getY() + ", " 
                 + destination.position.getZ() + "} in " 
-                + ModHelper.getDimensionName(destination.dimension);
+                + ModUtil.getDimensionName(destination.dimension);
     }
 
     @Override
@@ -345,7 +345,7 @@ public class TeleportationHandler implements ITeleportationHandler, INBTSerializ
     public boolean validateDestination(@Nullable Entity entity, TeleportDestination destination)
     {
         boolean isValid = false;
-        World destinationWorld = ModHelper.getWorldServerForDimension(destination.dimension); 
+        World destinationWorld = ModUtil.getWorldServerForDimension(destination.dimension); 
         IBlockState destinationBlockState = destinationWorld.getBlockState(destination.position);
         Block destinationBlock = destinationBlockState.getBlock();
         
@@ -394,7 +394,7 @@ public class TeleportationHandler implements ITeleportationHandler, INBTSerializ
             TileEntity te = destinationWorld.getTileEntity(destination.position);
             UUID destinationUUID = destination.getUUID();
             if (destination.position.equals(BlockPos.ORIGIN) 
-                    || destinationBlock != ModBlocks.teleportBeacon
+                    || destinationBlock != ModBlocks.TELEPORT_BEACON
                     || !(te instanceof TileEntityTeleportBeacon)
                     || !(((TileEntityTeleportBeacon) te).getUniqueID().equals(destinationUUID)))
             {
@@ -406,7 +406,7 @@ public class TeleportationHandler implements ITeleportationHandler, INBTSerializ
                 int[] dimensions = DimensionManager.getRegisteredDimensions().values().stream().flatMap(Collection::stream).mapToInt(Integer::intValue).toArray();
                 for (int dimension : dimensions)
                 {
-                    World world = ModHelper.getWorldServerForDimension(dimension);
+                    World world = ModUtil.getWorldServerForDimension(dimension);
                     beaconPos = TeleportationHelper.findTeleportBeacon(world, destinationUUID);
                     if (beaconPos != null)
                     {
@@ -445,7 +445,7 @@ public class TeleportationHandler implements ITeleportationHandler, INBTSerializ
     @Override
     public NBTTagCompound serializeNBT()
     {
-        ExperimentalMod.logger.info("TeleportationHandler.serializeNBT called");
+        ExperimentalMod.MOD_LOGGER.info("TeleportationHandler.serializeNBT called");
         NBTTagCompound compound = new NBTTagCompound();
         this.writeToNBT(compound);
         return compound;
@@ -468,7 +468,7 @@ public class TeleportationHandler implements ITeleportationHandler, INBTSerializ
     @Override
     public void deserializeNBT(NBTTagCompound nbt)
     {
-        ExperimentalMod.logger.info("TeleportationHandler.deserializeNBT called");
+        ExperimentalMod.MOD_LOGGER.info("TeleportationHandler.deserializeNBT called");
         this.readFromNBT(nbt);        
     }
     
@@ -495,6 +495,6 @@ public class TeleportationHandler implements ITeleportationHandler, INBTSerializ
      */
     protected void onDestinationValuesChanged(int index)
     {
-        // TODO: Do we need a markDirty() implementation here? Is this method even necessary?
+        // TODO: Call this when values have changed.
     }
 }

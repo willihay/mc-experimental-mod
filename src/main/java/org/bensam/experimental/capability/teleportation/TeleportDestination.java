@@ -124,7 +124,7 @@ public class TeleportDestination implements INBTSerializable<NBTTagCompound>
     @Override
     public NBTTagCompound serializeNBT()
     {
-        ExperimentalMod.logger.info("TeleportDestination.serializeNBT called for " + friendlyName);
+        ExperimentalMod.MOD_LOGGER.info("TeleportDestination.serializeNBT called for " + friendlyName);
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setInteger("DestinationType", destinationType.getDestinationValue());
         nbt.setInteger("Dimension", dimension);
@@ -139,7 +139,7 @@ public class TeleportDestination implements INBTSerializable<NBTTagCompound>
     @Override
     public void deserializeNBT(NBTTagCompound nbt)
     {
-        ExperimentalMod.logger.info("TeleportDestination.deserializeNBT called for " + nbt.getString("FriendlyName"));
+        ExperimentalMod.MOD_LOGGER.info("TeleportDestination.deserializeNBT called for " + nbt.getString("FriendlyName"));
         destinationType = DestinationType.values()[nbt.getInteger("DestinationType")];
         dimension = nbt.getInteger("Dimension");
         friendlyName = nbt.getString("FriendlyName");

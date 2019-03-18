@@ -1,14 +1,13 @@
 package org.bensam.experimental.entity;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 
 import org.bensam.experimental.capability.teleportation.TeleportationHelper;
+import org.bensam.experimental.potion.ModPotions;
 import org.bensam.experimental.potion.PotionTeleportation;
 
 import com.google.common.base.Predicate;
@@ -20,20 +19,22 @@ import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.play.server.SPacketMoveVehicle;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
+/**
+ * @author WilliHay
+ *
+ */
 public class EntityTeleportationSplashPotion extends EntityThrowable
 {
-    private TileEntity sourceTileEntity;
-    private boolean setDeadNextUpdate; // avoids "index out of bounds" exception when this splash potion causes another entity to be removed immediately from a World entity list
+    protected TileEntity sourceTileEntity;
+    protected boolean setDeadNextUpdate; // avoids "index out of bounds" exception when this splash potion causes another entity to be removed immediately from a World entity list
     
     public EntityTeleportationSplashPotion(World world)
     {
@@ -84,13 +85,13 @@ public class EntityTeleportationSplashPotion extends EntityThrowable
     {
         if (!this.world.isRemote && !setDeadNextUpdate)
         {
-            PotionTeleportation potion = new PotionTeleportation();
+            PotionTeleportation potion = ModPotions.TELEPORTATION_POTION;
             this.applySplash(result, potion);
             this.world.playEvent(2007, new BlockPos(this), potion.getLiquidColor()); // 2007 == potion instant effect
         }
     }
 
-    private void applySplash(RayTraceResult result, PotionTeleportation potion)
+    protected void applySplash(RayTraceResult result, PotionTeleportation potion)
     {
         AxisAlignedBB axisalignedbb = this.getEntityBoundingBox().grow(4.0D, 2.0D, 4.0D);
         List<Entity> list = this.world.<Entity>getEntitiesWithinAABB(Entity.class, axisalignedbb, TELEPORTABLE_DEFAULT);
@@ -165,7 +166,7 @@ public class EntityTeleportationSplashPotion extends EntityThrowable
         }
     };
 
-    private HashMap<Entity, Entity> getRiders(List<Entity> list)
+    protected HashMap<Entity, Entity> getRiders(List<Entity> list)
     {
         HashMap<Entity, Entity> riderMap = new HashMap<Entity, Entity>();
         

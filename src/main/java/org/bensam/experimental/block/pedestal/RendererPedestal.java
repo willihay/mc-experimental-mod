@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.bensam.experimental.block.pedestal;
 
 import org.lwjgl.opengl.GL11;
@@ -16,7 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.ForgeHooksClient;
 
 /**
- * @author Will
+ * @author WilliHay
  *
  */
 public class RendererPedestal extends TileEntitySpecialRenderer<TileEntityPedestal>

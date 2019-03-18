@@ -37,7 +37,7 @@ public class WorldEventHandler
     {
         if (event.getName().toString().equals("minecraft:chests/spawn_bonus_chest"))
         {
-            ExperimentalMod.logger.info("Found spawn_bonus_chest");
+            ExperimentalMod.MOD_LOGGER.info("Found spawn_bonus_chest");
             LootEntryTable entry = new LootEntryTable(
                     new ResourceLocation(ExperimentalMod.MODID, "chests/spawn_bonus_chest"), 1, 0, new LootCondition[0],
                     "experimental_inject_entry");

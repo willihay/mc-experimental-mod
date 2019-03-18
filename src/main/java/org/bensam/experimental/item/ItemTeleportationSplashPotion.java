@@ -2,17 +2,18 @@ package org.bensam.experimental.item;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bensam.experimental.entity.EntityTeleportationSplashPotion;
+import org.bensam.experimental.util.ModSetup;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityPotion;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -23,12 +24,17 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemTeleportationSplashPotion extends ItemBase
+/**
+ * @author WilliHay
+ *
+ */
+public class ItemTeleportationSplashPotion extends Item
 {
 
-    public ItemTeleportationSplashPotion(String name)
+    public ItemTeleportationSplashPotion(@Nonnull String name)
     {
-        super(name);
+        ModSetup.setRegistryNames(this, name);
+        ModSetup.setCreativeTab(this);
         setMaxStackSize(1);
     }
 

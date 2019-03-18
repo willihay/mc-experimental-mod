@@ -1,9 +1,8 @@
 /**
  * CreativeTab - provides a new tab in Creative mode
  */
-package org.bensam.experimental.client;
+package org.bensam.experimental;
 
-import org.bensam.experimental.ExperimentalMod;
 import org.bensam.experimental.item.ModItems;
 
 import net.minecraft.creativetab.CreativeTabs;
@@ -12,7 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
- * @author Will
+ * @author WilliHay
  *
  */
 public class CreativeTab extends CreativeTabs
@@ -27,7 +26,6 @@ public class CreativeTab extends CreativeTabs
     @SideOnly(Side.CLIENT)
     public ItemStack createIcon()
     {
-        return new ItemStack(ModItems.copperIngot);
+        return new ItemStack(ModItems.COPPER_INGOT);
     }
-
 }

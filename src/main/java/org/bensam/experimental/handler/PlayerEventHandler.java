@@ -60,7 +60,7 @@ public class PlayerEventHandler
         int dimension = player.dimension;
         BlockPos newSpawnPos = event.getNewSpawn();
         boolean isForced = event.isForced();
-        ExperimentalMod.logger.info("New spawn pos for " + player.getDisplayNameString() + ": " + newSpawnPos + "; isForced = " + isForced);
+        ExperimentalMod.MOD_LOGGER.info("New spawn pos for " + player.getDisplayNameString() + ": " + newSpawnPos + "; isForced = " + isForced);
         
         // Ignore a spawn getting set in a non-Overworld dimension if it is forced. Those do not come from awaking from a bed.
         // If the spawn is being set in the Overworld, however, that's a TeleportDestination we always track, so that can be updated.

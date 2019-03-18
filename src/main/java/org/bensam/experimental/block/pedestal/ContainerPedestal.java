@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.bensam.experimental.block.pedestal;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,7 +11,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 /**
- * @author Will
+ * @author WilliHay
  *
  */
 public class ContainerPedestal extends Container

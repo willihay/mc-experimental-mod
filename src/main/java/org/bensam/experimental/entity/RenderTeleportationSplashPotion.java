@@ -9,13 +9,17 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 
+/**
+ * @author WilliHay
+ *
+ */
 public class RenderTeleportationSplashPotion extends RenderSnowball<EntityTeleportationSplashPotion>
 {
     public static final Factory RENDER_FACTORY = new Factory();
 
     public RenderTeleportationSplashPotion(RenderManager renderManager, RenderItem itemRenderer)
     {
-        super(renderManager, ModItems.teleportationSplashPotion, itemRenderer);
+        super(renderManager, ModItems.TELEPORTATION_SPLASH_POTION, itemRenderer);
     }
 
     public static class Factory implements IRenderFactory<EntityTeleportationSplashPotion>

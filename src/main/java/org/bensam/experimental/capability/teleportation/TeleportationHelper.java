@@ -6,11 +6,11 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import org.bensam.experimental.ExperimentalMod;
-import org.bensam.experimental.ModHelper;
 import org.bensam.experimental.block.ModBlocks;
 import org.bensam.experimental.block.teleportbeacon.BlockTeleportBeacon;
 import org.bensam.experimental.block.teleportbeacon.TileEntityTeleportBeacon;
 import org.bensam.experimental.network.PacketUpdateTeleportBeacon;
+import org.bensam.experimental.util.ModUtil;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
@@ -41,36 +41,36 @@ import net.minecraft.world.WorldServer;
 public class TeleportationHelper
 {
 
-    @Nullable
-    public static BlockPos findSafeTeleportPosAroundDestination(World world, BlockPos teleportDestination,
-                                                                @Nullable EnumFacing facingHint)
-    {
-        if (teleportDestination.equals(BlockPos.ORIGIN))
-            return null;
-        
-        BlockPos safePos = teleportDestination;
-        if (facingHint != null)
-        {
-            if (facingHint == EnumFacing.DOWN)
-            {
-                safePos = safePos.offset(facingHint, 2);
-            }
-            else
-            {
-                safePos = safePos.offset(facingHint);
-            }
-        }
-
-        IBlockState state = world.getBlockState(safePos);
-        IBlockState stateAbove = world.getBlockState(safePos.up());
-        if (!state.getMaterial().isSolid() && !stateAbove.getMaterial().isSolid())
-            return safePos;
-
-        // TODO: try other blocks adjacent to teleportDestination - can we use logic from BlockBed.getSafeExitLocation() or something similar?
-
-        // Can't find a safe spawn position around intended destination!
-        return null;
-    }
+//    @Nullable
+//    public static BlockPos findSafeTeleportPosAroundDestination(World world, BlockPos teleportDestination,
+//                                                                @Nullable EnumFacing facingHint)
+//    {
+//        if (teleportDestination.equals(BlockPos.ORIGIN))
+//            return null;
+//        
+//        BlockPos safePos = teleportDestination;
+//        if (facingHint != null)
+//        {
+//            if (facingHint == EnumFacing.DOWN)
+//            {
+//                safePos = safePos.offset(facingHint, 2);
+//            }
+//            else
+//            {
+//                safePos = safePos.offset(facingHint);
+//            }
+//        }
+//
+//        IBlockState state = world.getBlockState(safePos);
+//        IBlockState stateAbove = world.getBlockState(safePos.up());
+//        if (!state.getMaterial().isSolid() && !stateAbove.getMaterial().isSolid())
+//            return safePos;
+//
+//        // TODO: try other blocks adjacent to teleportDestination - can we use logic from BlockBed.getSafeExitLocation() or something similar?
+//
+//        // Can't find a safe spawn position around intended destination!
+//        return null;
+//    }
 
     @Nullable
     public static BlockPos findSafeTeleportPosNearBed(int dimension, BlockPos bedPos)
@@ -78,27 +78,26 @@ public class TeleportationHelper
         if (bedPos.equals(BlockPos.ORIGIN))
             return null;
         
-        World world = ModHelper.getWorldServerForDimension(dimension);
+        World world = ModUtil.getWorldServerForDimension(dimension);
         IBlockState blockState = world.getBlockState(bedPos);
         Block block = blockState.getBlock();
         
         if (block != Blocks.BED)
             return null; // not a bed
         
-        // TODO: replace the BlockBed method with an improved method that returns the first safe location around a position
         return BlockBed.getSafeExitLocation(world, bedPos, 0);
     }
 
-    @Nullable
-    public static BlockPos findSafeTeleportPosToBed(World world, EntityPlayer player)
-    {
-        BlockPos bedPos = player.getBedLocation(world.provider.getDimension());
-        if (bedPos != null)
-            return EntityPlayer.getBedSpawnLocation(world, bedPos, false);
-
-        // Can't find bed spawn position!
-        return null;
-    }
+//    @Nullable
+//    public static BlockPos findSafeTeleportPosToBed(World world, EntityPlayer player)
+//    {
+//        BlockPos bedPos = player.getBedLocation(world.provider.getDimension());
+//        if (bedPos != null)
+//            return EntityPlayer.getBedSpawnLocation(world, bedPos, false);
+//
+//        // Can't find bed spawn position!
+//        return null;
+//    }
 
     @Nullable
     public static BlockPos findTeleportBeacon(World world, UUID beaconUUID)
@@ -176,7 +175,7 @@ public class TeleportationHelper
     {
         World currentWorld = entityToTeleport.world;
         int teleportDimension = destination.dimension;
-        World teleportWorld = ModHelper.getWorldServerForDimension(teleportDimension);
+        World teleportWorld = ModUtil.getWorldServerForDimension(teleportDimension);
         BlockPos safePos = null;
         float rotationYaw = entityToTeleport.rotationYaw;
 
@@ -216,7 +215,7 @@ public class TeleportationHelper
             return entityToTeleport;
 
         int entityCurrentDimension = entityToTeleport.dimension;
-        WorldServer teleportWorld = ModHelper.getWorldServerForDimension(teleportDimension);
+        WorldServer teleportWorld = ModUtil.getWorldServerForDimension(teleportDimension);
 
         // Dismount teleporting entity or passengers riding this entity, if applicable.
         if (entityToTeleport.isRiding())
@@ -238,13 +237,13 @@ public class TeleportationHelper
             // Transfer teleporting entity to teleport position in different dimension.
             if (entityToTeleport instanceof EntityPlayerMP)
             {
-                ExperimentalMod.logger.info("Using CustomTeleporter to teleport " + entityToTeleport.getDisplayName().getFormattedText() + " to dimension " + teleportDimension);
+                ExperimentalMod.MOD_LOGGER.info("Using CustomTeleporter to teleport " + entityToTeleport.getDisplayName().getFormattedText() + " to dimension " + teleportDimension);
                 teleportWorld.getMinecraftServer().getPlayerList().transferPlayerToDimension(
                         (EntityPlayerMP) entityToTeleport, teleportDimension, new CustomTeleporter(teleportWorld, teleportPos));
             }
             else if (entityToTeleport instanceof EntityLivingBase)
             {
-                ExperimentalMod.logger.info("Using CustomTeleporter to teleport " + entityToTeleport.getDisplayName().getFormattedText() + " to dimension " + teleportDimension);
+                ExperimentalMod.MOD_LOGGER.info("Using CustomTeleporter to teleport " + entityToTeleport.getDisplayName().getFormattedText() + " to dimension " + teleportDimension);
                 entityToTeleport = entityToTeleport.changeDimension(teleportDimension, new CustomTeleporter(teleportWorld, teleportPos));
             }
         }
@@ -258,12 +257,12 @@ public class TeleportationHelper
             if (entityToTeleport instanceof EntityLivingBase && ((EntityLivingBase) entityToTeleport)
                     .attemptTeleport(teleportPos.getX() + 0.5D, teleportPos.up().getY() + 0.25D, teleportPos.getZ() + 0.5D))
             {
-                ExperimentalMod.logger.info("attemptTeleport succeeded");
+                ExperimentalMod.MOD_LOGGER.info("attemptTeleport succeeded");
             }
             else
             {
                 // If we can't do it the "pretty way", just force it! Hopefully they survive teh magiks. :P
-                ExperimentalMod.logger.info("Calling setPositionAndUpdate...");
+                ExperimentalMod.MOD_LOGGER.info("Calling setPositionAndUpdate...");
                 entityToTeleport.setPositionAndUpdate(teleportPos.getX() + 0.5D, teleportPos.getY() + 0.25D,
                         teleportPos.getZ() + 0.5D);
             }

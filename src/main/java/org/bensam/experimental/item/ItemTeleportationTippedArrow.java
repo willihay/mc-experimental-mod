@@ -2,15 +2,15 @@ package org.bensam.experimental.item;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.bensam.experimental.ExperimentalMod;
 import org.bensam.experimental.entity.EntityTeleportationTippedArrow;
+import org.bensam.experimental.util.ModSetup;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemStack;
@@ -19,21 +19,17 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+/**
+ * @author WilliHay
+ *
+ */
 public class ItemTeleportationTippedArrow extends ItemArrow
 {
-    protected final String name = "teleportation_tipped_arrow";
     
-    public ItemTeleportationTippedArrow()
+    public ItemTeleportationTippedArrow(@Nonnull String name)
     {
-        setTranslationKey(name); // used for translating the name of the item into the currently active language
-        setRegistryName(name); // used when registering our item with Forge
-
-        setCreativeTab(ExperimentalMod.creativeTab);
-    }
-
-    public void registerItemModel()
-    {
-        ExperimentalMod.proxy.registerItemRenderer(this, 0, name);
+        ModSetup.setRegistryNames(this, name);
+        ModSetup.setCreativeTab(this);
     }
 
     /**

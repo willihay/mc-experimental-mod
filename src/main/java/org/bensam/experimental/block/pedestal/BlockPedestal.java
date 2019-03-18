@@ -1,14 +1,12 @@
-/**
- * BlockPedestal - custom JSON model, so we need to extend BlockBase
- */
 package org.bensam.experimental.block.pedestal;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 import org.bensam.experimental.ExperimentalMod;
-import org.bensam.experimental.ModGuiHandler;
-import org.bensam.experimental.block.BlockTileEntity;
+import org.bensam.experimental.util.ModGuiHandler;
+import org.bensam.experimental.util.ModSetup;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
@@ -17,19 +15,39 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 /**
- * @author Will
+ * @author WilliHay
  *
  */
-public class BlockPedestal extends BlockTileEntity<TileEntityPedestal>
+public class BlockPedestal extends Block
 {
-    public BlockPedestal()
+    public BlockPedestal(@Nonnull String name)
     {
-        super(Material.ROCK, "pedestal");
+        super(Material.ROCK);
+        
+        ModSetup.setRegistryNames(this, name);
+    }
+
+    @Override
+    public boolean hasTileEntity(IBlockState state)
+    {
+        return true;
+    }
+
+    @Override
+    public TileEntityPedestal createTileEntity(World world, IBlockState state)
+    {
+        return new TileEntityPedestal();
+    }
+    
+    public TileEntityPedestal getTileEntity(@Nonnull IBlockAccess world, BlockPos pos)
+    {
+        return (TileEntityPedestal) world.getTileEntity(pos);
     }
 
     @Override
@@ -44,19 +62,6 @@ public class BlockPedestal extends BlockTileEntity<TileEntityPedestal>
     public boolean isOpaqueCube(IBlockState state)
     {
         return false;
-    }
-
-    @Override
-    public Class<TileEntityPedestal> getTileEntityClass()
-    {
-        return TileEntityPedestal.class;
-    }
-
-    @Nullable
-    @Override
-    public TileEntityPedestal createTileEntity(World world, IBlockState state)
-    {
-        return new TileEntityPedestal();
     }
 
     @Override
@@ -83,17 +88,6 @@ public class BlockPedestal extends BlockTileEntity<TileEntityPedestal>
             }
             else
             {
-                // ItemStack stack = itemHandler.getStackInSlot(0);
-                // if (!stack.isEmpty())
-                // {
-                //     String localized = ExperimentalMod.proxy.localize(stack.getUnlocalizedName() + ".name");
-                //     player.sendMessage(new TextComponentString(stack.getCount() + "x " + localized));
-                // }
-                // else
-                // {
-                //     player.sendMessage(new TextComponentString("Empty"));
-                //     // or use localization like: new TextComponentTranslation("tile.tutorial.pedestal.empty")
-                // }
                 player.openGui(ExperimentalMod.instance, ModGuiHandler.PEDESTAL, world, pos.getX(), pos.getY(),
                         pos.getZ());
             }

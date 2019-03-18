@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.bensam.experimental;
+package org.bensam.experimental.util;
 
 import org.bensam.experimental.block.pedestal.ContainerPedestal;
 import org.bensam.experimental.block.pedestal.GuiPedestal;

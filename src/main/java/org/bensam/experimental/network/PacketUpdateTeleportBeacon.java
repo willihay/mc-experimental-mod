@@ -1,5 +1,6 @@
 package org.bensam.experimental.network;
 
+import org.bensam.experimental.ExperimentalMod;
 import org.bensam.experimental.block.teleportbeacon.BlockTeleportBeacon;
 import org.bensam.experimental.block.teleportbeacon.TileEntityTeleportBeacon;
 
@@ -50,12 +51,7 @@ public class PacketUpdateTeleportBeacon implements IMessage
                     // Set block state on the client so that lighting is updated.
                     world.setBlockState(message.pos, world.getBlockState(message.pos).withProperty(BlockTeleportBeacon.IS_ACTIVE, message.isActive), 0);
 
-                    boolean wasActive = teTeleportBeacon.isActive;
                     teTeleportBeacon.isActive = message.isActive;
-                    if (message.isActive && !wasActive)
-                    {
-                        ((TileEntityTeleportBeacon) te).particleSpawnStartTime = world.getTotalWorldTime() + TileEntityTeleportBeacon.PARTICLE_APPEARANCE_DELAY;
-                    }
 
                     // TODO: do we need this render update call now that we have a setBlockState call?
                     //world.markBlockRangeForRenderUpdate(te.getPos(), te.getPos());
